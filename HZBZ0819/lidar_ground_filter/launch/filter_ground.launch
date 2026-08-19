@@ -1,0 +1,21 @@
+<launch>
+    <!-- <node pkg="pcl_test" type="pcl_test_node" name="pcl_test_node" output="screen">
+        <param name="lidar_topic" value="/lidar/vlp32_right/PointCloud2" />
+    </node> -->
+
+    <node pkg="tf2_ros" type="static_transform_publisher" name="lidar_base_link_broadcaster" args="0 0 0 0 0 0 base_link livox_frame"/>
+    <node pkg="tf2_ros" type="static_transform_publisher" name="base_link_body_broadcaster" args="0 0 0 0 0 0 body base_link"/>
+    <node pkg="tf2_ros" type="static_transform_publisher" name="odom_camera_init_broadcaster" args="0 0 0 0 0 0 odom camera_init" />
+	<node pkg="tf2_ros" type="static_transform_publisher" name="workd_odom_broadcaster" args="0 0 0 0 0 0 world odom" />
+
+    <node pkg="pcl_test" type="ground_filter_node" name="ground_filter_node" output="screen">
+        <param name="input_topic" value="cloud_registered_body_1" />
+        <param name="ground_topic" value="filtered_points_ground" />
+        <param name="no_ground_topic" value="filtered_points_no_ground"/>
+    </node>
+
+    <node name="noground_trans_node" pkg="pcl_test" type="lidar_trans_node" output="screen">
+        <param name="lidar_frame" value="base_link" />
+        <param name="map_frame" value="world" />
+    </node>
+</launch>

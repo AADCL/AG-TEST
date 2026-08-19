@@ -1,0 +1,53 @@
+<launch>
+	<arg name="enable_drone_mode" default="false" />
+	<arg name="drone_cmd_vel_topic" default="/cmd_vel" />
+	<arg name="takeoff_height" default="1.0" />
+	<arg name="cmd_vel_timeout" default="0.5" />
+	<arg name="max_horizontal_speed" default="1.0" />
+	<arg name="max_yaw_rate" default="1.0" />
+	<arg name="altitude_kp" default="1.0" />
+	<arg name="max_vertical_speed" default="0.5" />
+	<arg name="control_rate" default="20.0" />
+
+	<!-- 无人机模态仅在显式启用时启动；起飞和降落由 ROS 服务触发。 -->
+	<node if="$(arg enable_drone_mode)"
+		  pkg="teb_local_planner_tutorials"
+		  type="drone_mode_node.py"
+		  name="drone_mode"
+		  output="screen"
+		  required="true">
+		<param name="cmd_vel_topic" value="$(arg drone_cmd_vel_topic)" />
+		<param name="takeoff_height" value="$(arg takeoff_height)" />
+		<param name="cmd_vel_timeout" value="$(arg cmd_vel_timeout)" />
+		<param name="max_horizontal_speed" value="$(arg max_horizontal_speed)" />
+		<param name="max_yaw_rate" value="$(arg max_yaw_rate)" />
+		<param name="altitude_kp" value="$(arg altitude_kp)" />
+		<param name="max_vertical_speed" value="$(arg max_vertical_speed)" />
+		<param name="control_rate" value="$(arg control_rate)" />
+	</node>
+
+    <!--  ************** Navigation ***************  -->
+	<node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+  	  	<rosparam file="$(find teb_local_planner_tutorials)/cfg/diff_drive/costmap_common_params_global.yaml" command="load" ns="global_costmap" />
+  	 	<rosparam file="$(find teb_local_planner_tutorials)/cfg/diff_drive/costmap_common_params_local.yaml" command="load" ns="local_costmap" />
+  		<rosparam file="$(find teb_local_planner_tutorials)/cfg/diff_drive/local_costmap_params.yaml" command="load" />
+  		<rosparam file="$(find teb_local_planner_tutorials)/cfg/diff_drive/global_costmap_params.yaml" command="load" />
+  		<rosparam file="$(find teb_local_planner_tutorials)/cfg/diff_drive/teb_local_planner_params.yaml" command="load" />
+		<!-- <rosparam file="$(find teb_local_planner_tutorials)/cfg/diff_drive/dwa_local_planner_params.yaml" command="load" /> -->
+
+		<param name="base_global_planner" value="global_planner/GlobalPlanner" />
+		<param name="planner_frequency" value="1.0" />
+		<param name="planner_patience" value="5.0" />
+
+		<param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
+		<!-- <param name="base_local_planner" value="robotino_local_planner/RobotinoLocalPlanner" /> -->
+		<param name="controller_frequency" value="5.0" />
+		<param name="controller_patience" value="15.0" />
+
+		<!-- <param name="base_local_planner" value="dwa_local_planner/DWALocalPlannerROS" />
+		<param name="controller_frequency" value="5.0" />
+		<param name="controller_patience" value="15.0" /> -->
+
+	</node>
+
+</launch>

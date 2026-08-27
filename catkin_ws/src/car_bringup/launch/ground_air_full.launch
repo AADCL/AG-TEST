@@ -1,0 +1,78 @@
+<launch>
+  <!-- Startup is passive: no takeoff, landing, arming, or physical-mode command is sent. -->
+  <arg name="start_mavros" default="false" />
+  <arg name="fcu_url" default="/dev/serial/by-id/usb-CUAV_PX4_CUAV_Nora_0-if00:57600" />
+  <arg name="gcs_url" default="" />
+  <arg name="start_livox" default="true" />
+  <arg name="start_fast_lio" default="true" />
+  <arg name="start_fastlio_odometry_to_px4" default="false" />
+  <arg name="start_ground_filter" default="true" />
+  <arg name="start_dynamic_mapping" default="false" />
+  <arg name="start_localization" default="true" />
+  <arg name="start_navigation" default="true" />
+  <arg name="start_control" default="true" />
+  <arg name="start_mission" default="true" />
+  <arg name="start_platform" default="true" />
+  <arg name="start_vision_to_mavros" default="true" />
+  <arg name="start_fusion_client" default="false" />
+  <arg name="start_video" default="false" />
+  <arg name="video_sn" default="SPIRITWING_LUKONG_SN" />
+  <arg name="video_source" default="rtsp://192.168.144.25:8554/main.264" />
+  <arg name="video_camera" default="front" />
+  <arg name="maps_root" default="/home/bitcq/catkin_ws/maps" />
+
+  <include if="$(arg start_mavros)" file="$(find mavros)/launch/px4.launch">
+    <arg name="fcu_url" value="$(arg fcu_url)" />
+    <arg name="gcs_url" value="$(arg gcs_url)" />
+  </include>
+
+  <include if="$(arg start_livox)" file="$(find livox_ros_driver2)/launch_ROS1/msg_MID360.launch" />
+  <include if="$(arg start_fast_lio)" file="$(find fast_lio_open3d)/launch/mapping_mid360.launch" />
+  <!-- MAVROS subscribes to odometry/out and owns the ENU/FLU -> NED/FRD conversion. -->
+  <node if="$(arg start_fastlio_odometry_to_px4)"
+        pkg="car_bringup"
+        type="fastlio_odometry_adapter.py"
+        name="fastlio_odometry_to_px4"
+        output="screen"
+        required="true">
+    <param name="input_topic" value="/Odometry_loc" />
+    <param name="output_topic" value="/mavros/odometry/out" />
+    <param name="expected_frame_id" value="camera_init" />
+    <param name="expected_child_frame_id" value="body" />
+    <param name="output_frame_id" value="odom" />
+    <param name="output_child_frame_id" value="base_link" />
+  </node>
+  <include if="$(arg start_ground_filter)" file="$(find pcl_test)/launch/filter_ground.launch" />
+  <include if="$(arg start_dynamic_mapping)" file="$(find dynamic_mapping)/launch/dynamic_mapping.launch" />
+
+  <include if="$(arg start_localization)" file="$(find ground_air_localization)/launch/localization.launch">
+    <arg name="maps_root" value="$(arg maps_root)" />
+  </include>
+
+  <include if="$(arg start_navigation)" file="$(find teb_local_planner_tutorials)/launch/bz_navigation.launch">
+    <arg name="enable_drone_mode" value="false" />
+  </include>
+  <include if="$(arg start_control)" file="$(find ground_air_control)/launch/control.launch">
+    <arg name="takeoff_height" value="1.0" />
+  </include>
+  <include if="$(arg start_mission)" file="$(find ground_air_mission)/launch/mission.launch">
+    <arg name="dwell_seconds" value="2.0" />
+    <arg name="goal_frame" value="world" />
+  </include>
+
+  <include if="$(arg start_vision_to_mavros)" file="$(find vision_to_mavros)/launch/localization_to_mavros.launch">
+    <arg name="target_frame_id" value="/world" />
+    <arg name="source_frame_id" value="/body" />
+  </include>
+  <include if="$(arg start_fusion_client)" file="$(find lukong_fusion_client)/launch/lukong_fusion_client.launch" />
+  <include if="$(arg start_platform)" file="$(find spiritwing_web)/launch/spiritwing_web.launch" />
+
+  <node if="$(arg start_video)"
+        pkg="spiritwing_web"
+        type="spiritwing_camera_push.sh"
+        name="ground_air_video_push"
+        args="$(arg video_sn) $(arg video_source) $(arg video_camera)"
+        output="screen"
+        respawn="true"
+        respawn_delay="3.0" />
+</launch>

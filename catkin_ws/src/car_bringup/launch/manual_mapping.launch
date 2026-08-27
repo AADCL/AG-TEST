@@ -1,0 +1,23 @@
+<launch>
+  <arg name="start_mavros" default="true" />
+  <arg name="start_video" default="false" />
+  <arg name="maps_root" default="/home/bitcq/catkin_ws/maps" />
+
+  <include file="$(find car_bringup)/launch/ground_air_full.launch">
+    <arg name="start_mavros" value="$(arg start_mavros)" />
+    <arg name="start_fastlio_odometry_to_px4" value="true" />
+    <arg name="start_dynamic_mapping" value="true" />
+    <arg name="start_localization" value="false" />
+    <arg name="start_navigation" value="false" />
+    <arg name="start_control" value="false" />
+    <arg name="start_mission" value="false" />
+    <arg name="start_vision_to_mavros" value="false" />
+    <arg name="start_fusion_client" value="true" />
+    <arg name="start_video" value="$(arg start_video)" />
+  </include>
+
+  <!-- Recorder and identity world->camera_init TF. Vehicle motion remains RC-only. -->
+  <include file="$(find ground_air_mapping)/launch/mapping.launch">
+    <arg name="maps_root" value="$(arg maps_root)" />
+  </include>
+</launch>

@@ -1,0 +1,10 @@
+<launch>
+  <arg name="params" default="$(find spiritwing_web)/config/params.yaml"/>
+
+  <node pkg="spiritwing_web"
+        type="spiritwing_web_node"
+        name="spiritwing_web_node"
+        output="screen">
+    <param name="params_file" value="$(arg params)"/>
+  </node>
+</launch>

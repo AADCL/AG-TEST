@@ -1,0 +1,35 @@
+<launch>
+  <arg name="takeoff_height" default="1.0" />
+  <arg name="service_timeout" default="30.0" />
+  <arg name="cmd_vel_timeout" default="0.5" />
+  <arg name="control_rate" default="20.0" />
+  <arg name="start_ground_actuator" default="true" />
+
+  <node pkg="ground_air_control"
+        type="mode_manager_node.py"
+        name="ground_air_mode_manager"
+        output="screen"
+        required="true">
+    <param name="takeoff_height" value="$(arg takeoff_height)" />
+    <param name="service_timeout" value="$(arg service_timeout)" />
+  </node>
+
+  <node pkg="ground_air_control"
+        type="cmd_vel_router_node.py"
+        name="ground_air_cmd_vel_router"
+        output="screen"
+        required="true">
+    <param name="timeout" value="$(arg cmd_vel_timeout)" />
+    <param name="rate" value="$(arg control_rate)" />
+  </node>
+
+  <node if="$(arg start_ground_actuator)"
+        pkg="ground_air_control"
+        type="ground_actuator_node.py"
+        name="ground_air_ground_actuator"
+        output="screen"
+        required="true">
+    <param name="timeout" value="$(arg cmd_vel_timeout)" />
+    <param name="rate" value="$(arg control_rate)" />
+  </node>
+</launch>

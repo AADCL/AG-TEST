@@ -1,0 +1,49 @@
+<launch>
+	<arg name="enable_drone_mode" default="false" />
+	<arg name="drone_cmd_vel_topic" default="/cmd_vel" />
+	<arg name="takeoff_height" default="1.0" />
+	<arg name="cmd_vel_timeout" default="0.5" />
+	<arg name="max_horizontal_speed" default="1.0" />
+	<arg name="max_yaw_rate" default="1.0" />
+	<arg name="altitude_kp" default="1.0" />
+	<arg name="max_vertical_speed" default="0.5" />
+	<arg name="control_rate" default="20.0" />
+	<arg name="navigation_cmd_vel_topic" default="/navigation/cmd_vel" />
+
+	<!-- 兼容入口：显式启用时使用反馈确认、急停闭锁和双通道路由的新控制包。 -->
+	<include if="$(arg enable_drone_mode)" file="$(find ground_air_control)/launch/control.launch">
+		<arg name="takeoff_height" value="$(arg takeoff_height)" />
+		<arg name="cmd_vel_timeout" value="$(arg cmd_vel_timeout)" />
+		<arg name="control_rate" value="$(arg control_rate)" />
+	</include>
+
+    <!--  ************** Navigation ***************  -->
+	<node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+		<remap from="/cmd_vel" to="$(arg navigation_cmd_vel_topic)" />
+  	  	<rosparam file="$(find teb_local_planner_tutorials)/cfg/diff_drive/costmap_common_params_global.yaml" command="load" ns="global_costmap" />
+  	 	<rosparam file="$(find teb_local_planner_tutorials)/cfg/diff_drive/costmap_common_params_local.yaml" command="load" ns="local_costmap" />
+ 		<rosparam file="$(find teb_local_planner_tutorials)/cfg/diff_drive/local_costmap_params.yaml" command="load" />
+ 		<rosparam file="$(find teb_local_planner_tutorials)/cfg/diff_drive/global_costmap_params.yaml" command="load" />
+		<rosparam file="$(find teb_local_planner_tutorials)/cfg/diff_drive/global_planner_params.yaml" command="load" />
+ 		<rosparam file="$(find teb_local_planner_tutorials)/cfg/diff_drive/teb_local_planner_params.yaml" command="load" />
+		<!-- <rosparam file="$(find teb_local_planner_tutorials)/cfg/diff_drive/dwa_local_planner_params.yaml" command="load" /> -->
+
+		<param name="base_global_planner" value="global_planner/GlobalPlanner" />
+		<param name="planner_frequency" value="1.0" />
+		<param name="planner_patience" value="5.0" />
+
+		<param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
+		<!-- <param name="base_local_planner" value="robotino_local_planner/RobotinoLocalPlanner" /> -->
+		<param name="controller_frequency" value="5.0" />
+		<param name="controller_patience" value="15.0" />
+		<!-- 实机保守策略：规划失败或遇到不可绕行墙面时停车，不执行恢复性原地旋转。 -->
+		<param name="recovery_behavior_enabled" value="false" />
+		<param name="clearing_rotation_allowed" value="false" />
+
+		<!-- <param name="base_local_planner" value="dwa_local_planner/DWALocalPlannerROS" />
+		<param name="controller_frequency" value="5.0" />
+		<param name="controller_patience" value="15.0" /> -->
+
+	</node>
+
+</launch>

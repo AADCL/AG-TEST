@@ -1,0 +1,16 @@
+<launch>
+  <node pkg="spiritwing_web"
+        type="cmd_vel_to_actuator_control.py"
+        name="cmd_vel_to_actuator_control"
+        output="screen">
+    <param name="cmd_vel_topic" value="/cmd_vel"/>
+    <param name="actuator_topic" value="/mavros/actuator_control"/>
+    <param name="frame_id" value="base_link"/>
+    <param name="publish_hz" value="20.0"/>
+    <param name="group_mix" value="1"/>
+    <param name="yaw_index" value="2"/>
+    <param name="forward_index" value="3"/>
+    <param name="invert_yaw" value="true"/>
+    <param name="timeout_s" value="0.5"/>
+  </node>
+</launch>

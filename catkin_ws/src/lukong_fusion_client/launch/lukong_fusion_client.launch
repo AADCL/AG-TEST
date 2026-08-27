@@ -1,0 +1,10 @@
+<launch>
+  <arg name="config" default="$(find lukong_fusion_client)/config/lukong_fusion_client.yaml" />
+
+  <rosparam command="load" file="$(arg config)" />
+
+  <node pkg="lukong_fusion_client"
+        type="lukong_fusion_client_node.py"
+        name="lukong_fusion_client"
+        output="screen" />
+</launch>

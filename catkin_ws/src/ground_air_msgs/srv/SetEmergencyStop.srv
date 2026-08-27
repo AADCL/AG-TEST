@@ -1,0 +1,5 @@
+bool active
+---
+bool success
+string message
+ground_air_msgs/VehicleStatus status

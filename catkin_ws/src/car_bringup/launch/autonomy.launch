@@ -1,0 +1,21 @@
+<launch>
+  <arg name="start_mavros" default="false" />
+  <arg name="start_video" default="false" />
+  <arg name="maps_root" default="/home/bitcq/catkin_ws/maps" />
+  <!-- Safe first-stage defaults: localization/platform only, no motion producers. -->
+  <arg name="start_navigation" default="false" />
+  <arg name="start_control" default="false" />
+  <arg name="start_mission" default="false" />
+
+  <include file="$(find car_bringup)/launch/ground_air_full.launch">
+    <arg name="start_mavros" value="$(arg start_mavros)" />
+    <arg name="start_dynamic_mapping" value="false" />
+    <arg name="start_localization" value="true" />
+    <arg name="start_navigation" value="$(arg start_navigation)" />
+    <arg name="start_control" value="$(arg start_control)" />
+    <arg name="start_mission" value="$(arg start_mission)" />
+    <arg name="start_fusion_client" value="false" />
+    <arg name="start_video" value="$(arg start_video)" />
+    <arg name="maps_root" value="$(arg maps_root)" />
+  </include>
+</launch>

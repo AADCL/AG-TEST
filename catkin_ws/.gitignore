@@ -1,0 +1,12 @@
+# catkin/ROS 编译产物
+build/
+devel/
+logs/
+.catkin_tools/
+
+# Python
+__pycache__/
+*.pyc
+
+# 系统文件
+.DS_Store

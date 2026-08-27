@@ -1,0 +1,68 @@
+lukong_fusion_client:
+  # 融合服务器 HTTP 接入地址。当前 fusion_server 代码实际路由为：
+  # POST /keyframe_data, POST /keyframe_poses, POST /save_fused_map。
+  fusion_server: "http://192.168.50.165:8080"
+
+  # 路空无人机自身可被融合服务器访问的 IP，用于生成 PCD 下载 URL。
+  robot_ip: "192.168.50.102"
+  http_host: "0.0.0.0"
+  http_port: 5000
+
+  robot_id: "SPIRITWING_LUKONG_SN"
+  area_id: "C"
+  frame_id: "map"
+
+  # 路空真机已确认的 ROS1 主链路。
+  odom_topic: "/Odometry_loc"
+  fallback_odom_topic: "/mavros/local_position/odom"
+  # 融合服务端的 KeyFrame 消息注释要求 pointcloud 是 body frame (undistorted)。
+  # 路空 Web 模块地图上传/实时显示用 /cloud_registered_1；融合客户端优先用 body 点云，
+  # 避免服务端再按 pose 变换时对世界系点云做二次变换。
+  pointcloud_topic: "/cloud_registered_body_1"
+
+  # 临时 PCD 保存目录。启动时默认清理旧 PCD，避免磁盘长期堆积。
+  pcd_dir: "/tmp/lukong_fusion_client/pcd"
+  clear_pcd_on_start: true
+  max_saved_pcd_files: 200
+
+  # 关键帧策略。
+  # 2026-06-16 起改为"对齐厂家原生设备"：厂家 http_data_sender.py 不截断点数、不限会话帧数，
+  # 由上游 SLAM 决定关键帧。我们用距离/yaw 阈值做等价的关键帧筛选即可。
+  keyframe_check_period_s: 1.0
+  keyframe_min_interval_s: 2.0
+  keyframe_distance_m: 0.8
+  keyframe_yaw_deg: 12.0
+
+  # 会话级关键帧上限。0 = 不限制（对齐厂家多帧方式，厂家反馈其设备多帧融合正常）。
+  # 历史上为规避服务端 ">2 帧崩溃" 曾设为 1，那是临时规避、非厂家做法。
+  # 现按厂家方式放开为 0；若现场仍崩，按 DEVELOPMENT_STATUS 的"渐进放帧+服务端 stdout 末行"诊断流程定位。
+  # 每次 slam_start 会重置计数。
+  max_keyframes_per_session: 0
+
+  # send_first_keyframe_immediately=true：激活后在"第一帧机会"自动发一帧（位置=当时所在处）。
+  # 想精确控制"在重叠区域那一刻"发帧，把它设为 false，改用 manual_trigger_topic 手动触发，
+  # 这样能显著提高与小车的 ScanContext 匹配成功率（两台设备必须在同一重叠位置各抓一帧）。
+  send_first_keyframe_immediately: true
+
+  # 手动触发发送：往这个 topic 发任意 std_msgs/String，会立刻按当前位姿发一帧（受上限约束）。
+  #   rostopic pub -1 /lukong_fusion/send_now std_msgs/String "data: 'go'"
+  manual_trigger_topic: "/lukong_fusion/send_now"
+
+  # 当前 fusion_server 的 /start_fusion_node 会重启融合节点。
+  # 路空侧需要等 spiritwing_web 收到 slam_start 后延迟发送关键帧，
+  # 避免关键帧早于融合节点重启完成而被清空。
+  send_policy: "slam_command"
+  slam_command_topic: "/spiritwing/command_json_placeholder"
+  slam_start_delay_s: 20.0
+  # 小车客户端暂时无法修改，当前小车固定使用 area_id=C。
+  # 因此无人机侧固定发 C，不使用平台 slam_start 下发的 area_id=1 覆盖。
+  update_area_id_from_slam_command: false
+
+  # 点云保存控制。fusion_server 当前按 x/y/z/intensity 读取 PCD。
+  # 0 = 不截断，发送全分辨率点云（对齐厂家 http_data_sender.py：它读取全部点、不降采样）。
+  # 点数越多 ScanContext 描述子越有区分度、跨设备匹配越稳；ASCII PCD 体积会变大，注意上传带宽。
+  max_points_per_keyframe: 0
+  pcd_ascii: true
+
+  request_timeout_s: 60.0
+  log_payload: false

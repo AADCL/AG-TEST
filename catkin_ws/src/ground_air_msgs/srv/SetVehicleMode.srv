@@ -1,0 +1,7 @@
+uint8 GROUND=1
+uint8 AIR=3
+uint8 target_mode
+---
+bool success
+string message
+ground_air_msgs/VehicleStatus status

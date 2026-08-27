@@ -1,0 +1,15 @@
+<launch>
+  <arg name="dwell_seconds" default="2.0" />
+  <arg name="goal_frame" default="world" />
+  <arg name="move_base_action" default="/move_base" />
+
+  <node pkg="ground_air_mission"
+        type="mission_executor_node.py"
+        name="ground_air_mission_executor"
+        output="screen"
+        required="true">
+    <param name="dwell_seconds" value="$(arg dwell_seconds)" />
+    <param name="default_goal_frame" value="$(arg goal_frame)" />
+    <param name="move_base_action" value="$(arg move_base_action)" />
+  </node>
+</launch>

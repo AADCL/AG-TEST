@@ -1,0 +1,7 @@
+---
+bool success
+string message
+string map_directory
+uint64 point_count
+float64 map_area
+ground_air_msgs/MappingStatus status

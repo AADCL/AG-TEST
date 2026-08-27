@@ -1,0 +1,6 @@
+string mission_id
+geometry_msgs/PoseStamped[] goals
+---
+bool accepted
+string message
+uint32 goal_count

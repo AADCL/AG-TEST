@@ -1,0 +1,9 @@
+bool use_initial_guess
+geometry_msgs/PoseWithCovarianceStamped initial_guess
+float64 timeout
+---
+bool success
+string message
+geometry_msgs/PoseStamped pose
+float64 fitness
+float64 rmse

@@ -1,0 +1,46 @@
+<launch>
+  <arg name="maps_root" default="/home/bitcq/catkin_ws/maps" />
+  <arg name="map_frame" default="world" />
+  <arg name="odom_frame" default="camera_init" />
+  <arg name="base_frame" default="base_link" />
+  <arg name="scan_topic" default="/cloud_registered_1" />
+  <arg name="odom_topic" default="/Odometry_loc" />
+  <arg name="relocalize_timeout" default="60.0" />
+  <arg name="submap_duration" default="3.0" />
+  <arg name="min_submap_frames" default="5" />
+
+  <node pkg="ground_air_localization"
+        type="map_manager_node.py"
+        name="ground_air_map_manager"
+        output="screen"
+        required="true">
+    <param name="maps_root" value="$(arg maps_root)" />
+    <param name="map_frame" value="$(arg map_frame)" />
+  </node>
+
+  <node pkg="ground_air_localization"
+        type="global_relocalizer_node"
+        name="ground_air_global_relocalizer"
+        output="screen"
+        required="true">
+    <param name="scan_topic" value="$(arg scan_topic)" />
+    <param name="odom_topic" value="$(arg odom_topic)" />
+    <param name="map_frame" value="$(arg map_frame)" />
+    <param name="odom_frame" value="$(arg odom_frame)" />
+    <param name="base_frame" value="$(arg base_frame)" />
+    <param name="default_timeout" value="$(arg relocalize_timeout)" />
+    <param name="submap_duration" value="$(arg submap_duration)" />
+    <param name="min_submap_frames" value="$(arg min_submap_frames)" />
+  </node>
+
+  <node pkg="ground_air_localization"
+        type="world_tf_owner_node.py"
+        name="ground_air_world_tf_owner"
+        output="screen"
+        required="true">
+    <param name="mode" value="localization" />
+    <param name="map_frame" value="$(arg map_frame)" />
+    <param name="odom_frame" value="$(arg odom_frame)" />
+    <param name="rate" value="20.0" />
+  </node>
+</launch>

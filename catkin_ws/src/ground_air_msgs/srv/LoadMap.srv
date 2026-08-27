@@ -1,0 +1,6 @@
+string map_id
+string source_uri
+---
+bool success
+string message
+string map_directory

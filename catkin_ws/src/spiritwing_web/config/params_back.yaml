@@ -1,0 +1,77 @@
+web_node:
+  # 指控平台地址。最终 URL = url + sn。
+  url: "ws://192.168.50.165/showroom-api/ws?deviceId="
+  sn: "SPIRITWING_LUKONG_SN"
+  area_id: "123"
+  URL_FILE_DOWNLOAD: "http://192.168.50.165/showroom-api/minio/download/"
+  URL_FILE_UPLOAD: "http://192.168.50.165/showroom-api/minio/upload"
+
+spiritwing_node:
+  # 资料来源：bingzhi-wurenji/ROS2无人机接入指控系统信息清单-路空.xlsx
+  # 当前资料未提供 swing_msgs/*.msg 定义，所以本包默认不直接发布 swing_msgs::UAVCommand。
+  # command_backend:
+  #   json_placeholder: 将指控动作封装成 JSON 字符串发布到 command_text_topic，供现场桥接/抓包验证。
+  #   mavros:          使用 MAVROS 标准 service/topic 做兜底控制，仅用于现场明确允许时。
+  #   cmd_vel:         发布 /cmd_vel，配合 cmd_vel_to_actuator_control.py 转 /mavros/actuator_control。
+  command_backend: "cmd_vel"
+
+  # navigation_backend:
+  #   patrol_points:      发布 nav_msgs/Path 到 /spiritwing/patrol_points。
+  #   move_base_simple:   发布第一个目标点到 /move_base_simple/goal。
+  #   both:               两者同时发布，用于现场对比真实导航链路。
+  navigation_backend: "move_base_simple"
+
+  topics:
+    mavros_state: "/mavros/state"
+    mavros_extended: "/mavros/extended_state"
+    mavros_battery: "/mavros/battery"
+    # 19700101_081820 真机采集：/Odometry 不存在，/Odometry_loc 和 /mavros/local_position/odom 存在。
+    odom: "/Odometry_loc"
+    fallback_odom: "/mavros/local_position/odom"
+    initialpose: "/initialpose"
+    patrol_points: "/spiritwing/patrol_points"
+    move_base_goal: "/move_base_simple/goal"
+    move_base_cancel: "/move_base/cancel"
+    patrol_state_text: "/spiritwing/patrol_state_text_placeholder"
+    command_text: "/spiritwing/command_json_placeholder"
+    # /livox/lidar 是 livox_ros_driver2/CustomMsg，Web 节点需要 sensor_msgs/PointCloud2。
+    pointcloud: "/cloud_registered_1"
+    # 19700101_081820 真机采集：/map 为 nav_msgs/OccupancyGrid，由 /dynamic_mapping 发布。
+    map: "/map"
+    cmd_vel: "/cmd_vel"
+
+  services:
+    mavros_arming: "/mavros/cmd/arming"
+    mavros_set_mode: "/mavros/set_mode"
+    mavros_takeoff: "/mavros/cmd/takeoff"
+    mavros_land: "/mavros/cmd/land"
+
+  frames:
+    task_frame_id: "world"
+    move_base_goal_frame_id: "world"
+    initialpose_frame_id: "world"
+
+  control:
+    default_takeoff_altitude: 1.0
+    # /cmd_vel 会被现场脚本映射到 /mavros/actuator_control，数值过大会很冲。
+    # 调试期先用保守值，确认安全后再逐步加大。
+    manual_speed: 0.2
+    manual_vertical_speed: 0.12
+    manual_yaw_rate: 0.25
+    manual_timeout_s: 2.0
+    republish_manual_hz: 30.0
+    set_mode_before_mavros_control: false
+    mavros_control_mode: "OFFBOARD"
+
+  maps:
+    # 未配置 pgm/yaml 时，slam_stop_down 会把 /map 自动保存到该目录后上传。
+    maps_dir: "/tmp/spiritwing_web/maps"
+    pcd_path: ""
+    pgm_path: ""
+    yaml_path: ""
+    pose_path: ""
+
+  scripts:
+    sensor: ""
+    mapping: ""
+    mission: ""

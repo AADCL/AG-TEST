@@ -12,13 +12,8 @@
   <arg name="start_navigation" default="true" />
   <arg name="start_control" default="true" />
   <arg name="start_mission" default="true" />
-  <arg name="start_platform" default="true" />
   <arg name="start_vision_to_mavros" default="true" />
   <arg name="start_fusion_client" default="false" />
-  <arg name="start_video" default="false" />
-  <arg name="video_sn" default="SPIRITWING_LUKONG_SN" />
-  <arg name="video_source" default="rtsp://192.168.144.25:8554/main.264" />
-  <arg name="video_camera" default="front" />
   <arg name="maps_root" default="/home/bitcq/catkin_ws/maps" />
 
   <include if="$(arg start_mavros)" file="$(find mavros)/launch/px4.launch">
@@ -26,7 +21,9 @@
     <arg name="gcs_url" value="$(arg gcs_url)" />
   </include>
 
-  <include if="$(arg start_livox)" file="$(find livox_ros_driver2)/launch_ROS1/msg_MID360.launch" />
+  <include if="$(arg start_livox)" file="$(find livox_ros_driver2)/launch_ROS1/msg_MID360.launch">
+    <arg name="msg_frame_id" value="base_link" />
+  </include>
   <include if="$(arg start_fast_lio)" file="$(find fast_lio_open3d)/launch/mapping_mid360.launch" />
   <!-- MAVROS subscribes to odometry/out and owns the ENU/FLU -> NED/FRD conversion. -->
   <node if="$(arg start_fastlio_odometry_to_px4)"
@@ -57,22 +54,12 @@
   </include>
   <include if="$(arg start_mission)" file="$(find ground_air_mission)/launch/mission.launch">
     <arg name="dwell_seconds" value="2.0" />
-    <arg name="goal_frame" value="world" />
+    <arg name="goal_frame" value="map" />
   </include>
 
   <include if="$(arg start_vision_to_mavros)" file="$(find vision_to_mavros)/launch/localization_to_mavros.launch">
-    <arg name="target_frame_id" value="/world" />
+    <arg name="target_frame_id" value="/map" />
     <arg name="source_frame_id" value="/body" />
   </include>
   <include if="$(arg start_fusion_client)" file="$(find lukong_fusion_client)/launch/lukong_fusion_client.launch" />
-  <include if="$(arg start_platform)" file="$(find spiritwing_web)/launch/spiritwing_web.launch" />
-
-  <node if="$(arg start_video)"
-        pkg="spiritwing_web"
-        type="spiritwing_camera_push.sh"
-        name="ground_air_video_push"
-        args="$(arg video_sn) $(arg video_source) $(arg video_camera)"
-        output="screen"
-        respawn="true"
-        respawn_delay="3.0" />
 </launch>

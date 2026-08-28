@@ -6,8 +6,8 @@
         <param name="map_resolution" value="0.05" />
         <param name="map_min_height" value="0.1" />
         <param name="map_max_height" value="0.5" />
-        <param name="map_frame_id" value="world" />
-        <param name="lidar_frame_id" value="livox_frame" />
+        <param name="map_frame_id" value="map" />
+        <param name="lidar_frame_id" value="base_link" />
         <param name="lidar_vision_size" value="120" />
         <param name="lidar_blind_size" value="0.1" />
         <param name="lidar_zone_num" value="720" />

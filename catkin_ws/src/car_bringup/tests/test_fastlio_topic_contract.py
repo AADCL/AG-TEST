@@ -33,8 +33,6 @@ CONSUMER_FILES = (
     "ground_air_localization/src/global_relocalizer_node.cpp",
     "car_bringup/scripts/fastlio_odometry_adapter.py",
     "car_bringup/launch/ground_air_full.launch",
-    "spiritwing_web/config/params.yaml",
-    "spiritwing_web/config/params_back.yaml",
     "lukong_fusion_client/scripts/lukong_fusion_client_node.py",
     "lukong_fusion_client/config/lukong_fusion_client.yaml",
     "lidar_ground_filter/launch/filter_ground.launch",

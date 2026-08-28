@@ -1,8 +1,8 @@
 # 空地两用机器人地面模态话题、启动文件、TF树与常见问题表
 
-版本：V1.1  
-日期：2026-08-28  
-ROS：ROS1 Noetic  
+版本：V1.2
+日期：2026-08-28
+ROS：ROS1 Noetic
 工作空间：`/home/bitcq/catkin_ws`
 
 > 本表集中记录当前地面模态运行接口和诊断基准。实际在线接口最终以 `rosnode list`、`rostopic list`、`rosservice list` 和 `roslaunch --nodes` 为准。
@@ -20,8 +20,8 @@ ROS：ROS1 Noetic
 
 | 模式 | 正式入口 | 主要输出 | 禁止同时启动 |
 |---|---|---|---|
-| 手控建图 | `car_bringup/manual_mapping.launch` | 注册点云、局部里程计、动态 `/map`、地图记录服务 | 第二套 Livox、FAST-LIO、定位、导航、控制、任务 |
-| 仅定位检查 | `car_bringup/ground_air_full.launch`，显式关闭运动模块 | 地图管理、全局重定位、全局 TF | 建图 launch、第二个全局 TF 发布者 |
+| 手控建图 | `car_bringup/start_mapping.launch map_id:=<id>` | 建图基础栈、自动开始记录 | 第二套 Livox、FAST-LIO、定位、导航、控制、任务 |
+| 仅定位检查 | `car_bringup/start_relocalization.launch map_id:=<id>` | 仅定位基础栈、自动加载地图和全局重定位 | 建图 launch、第二个全局 TF 发布者 |
 | 自主基础栈 | `car_bringup/autonomy.launch` | Livox、FAST-LIO、定位、可选 MAVROS/平台 | 建图 launch、重复传感器和定位节点 |
 | 地面规划避障 | `teb_local_planner_tutorials/bz_navigation.launch enable_drone_mode:=false` | 全局路径、局部轨迹、`/navigation/cmd_vel` | 第二个 `move_base` |
 | 地面控制 | `ground_air_control/control.launch` | 状态、速度路由、执行器、急停服务 | 第二套控制和执行器节点 |
@@ -35,8 +35,11 @@ ROS：ROS1 Noetic
 
 | Launch | 关键参数/默认值 | 实际行为 | 状态 |
 |---|---|---|---|
-| `car_bringup/manual_mapping.launch` | `start_mavros=true`、`start_video=false`、`maps_root=/home/bitcq/catkin_ws/maps` | MAVROS、Livox、FAST-LIO、里程计适配、动态地图、融合客户端、地图记录器；关闭定位/导航/控制/任务 | 正式建图入口 |
-| `car_bringup/autonomy.launch` | `start_mavros=false`、`start_navigation=false`、`start_control=false`、`start_mission=false`、`start_video=false` | 包含 `ground_air_full.launch`，默认先定位、不运动 | 正式自主基础入口 |
+| `car_bringup/start_mapping.launch` | 必填 `map_id`；`start_stack=true`、`start_mavros=true`、服务等待 90 s | 启动手动建图栈并自动开始记录；成功后保持栈运行 | 正式建图入口 |
+| `car_bringup/save_mapping.launch` | 服务等待 15 s | 调用保存地图服务、打印目录/点数/面积后退出 | 正式保存入口 |
+| `car_bringup/start_relocalization.launch` | 必填 `map_id`；`start_stack=true`、`start_mavros=false`、重定位超时 60 s | 启动仅定位栈、加载地图并执行全局重定位；成功后保持栈运行 | 正式重定位入口 |
+| `car_bringup/manual_mapping.launch` | `start_mavros=true`、`maps_root=/home/bitcq/catkin_ws/maps` | 建图基础栈；不自动开始记录 | 底层入口 |
+| `car_bringup/autonomy.launch` | `start_mavros=false`、`start_navigation=false`、`start_control=false`、`start_mission=false` | 包含 `ground_air_full.launch`，默认先定位、不运动 | 自主基础入口 |
 | `car_bringup/ground_air_full.launch` | 多个 `start_*` 开关 | 组合全系统；启动本身不解锁、不起飞、不降落 | 通用组合入口 |
 | `car_bringup/bringup.launch` | 无 | 旧式组合：地面过滤、动态地图和导航 | 不作为正式全流程入口 |
 
@@ -44,14 +47,13 @@ ROS：ROS1 Noetic
 
 | Launch | 关键参数 | 节点/行为 |
 |---|---|---|
-| `ground_air_mapping/launch/mapping.launch` | `maps_root` | 地图记录器、建图模式 `world → camera_init` |
-| `ground_air_localization/launch/localization.launch` | `maps_root` | map manager、global relocalizer、world TF owner |
+| `ground_air_mapping/launch/mapping.launch` | `maps_root` | 地图记录器、建图模式 `map → odom` 恒等 TF |
+| `ground_air_localization/launch/localization.launch` | `maps_root` | map manager、global relocalizer、全局 TF owner（节点名沿用 `ground_air_world_tf_owner`） |
 | `teb_local_planner_tutorials/launch/bz_navigation.launch` | `enable_drone_mode=false`、`navigation_cmd_vel_topic=/navigation/cmd_vel` | `move_base` + GlobalPlanner + TEB |
 | `ground_air_control/launch/control.launch` | `takeoff_height=1.0`、控制超时/频率 | mode manager、cmd_vel router、ground actuator |
-| `ground_air_mission/launch/mission.launch` | `dwell_seconds=2.0`、`goal_frame=world` | 有序任务执行器 |
-| `vision_to_mavros/launch/localization_to_mavros.launch` | `target_frame_id=/world`、`source_frame_id=/body` | 向 MAVROS 提供定位适配 |
+| `ground_air_mission/launch/mission.launch` | `dwell_seconds=2.0`、`goal_frame=map` | 有序任务执行器 |
+| `vision_to_mavros/launch/localization_to_mavros.launch` | `target_frame_id=/map`、`source_frame_id=/body` | 向 MAVROS 提供定位适配 |
 | `lukong_fusion_client/launch/lukong_fusion_client.launch` | 由包配置决定 | 点云/里程计关键帧上传 |
-| `spiritwing_web/launch/spiritwing_web.launch` | 由平台配置决定 | 指控平台适配 |
 
 ### 3.3 `ground_air_full.launch` 开关
 
@@ -67,10 +69,8 @@ ROS：ROS1 Noetic
 | `start_navigation` | true | `bz_navigation.launch`，强制地面模式 |
 | `start_control` | true | `ground_air_control/control.launch` |
 | `start_mission` | true | `ground_air_mission/mission.launch` |
-| `start_platform` | true | `spiritwing_web` |
 | `start_vision_to_mavros` | true | 定位到 MAVROS |
 | `start_fusion_client` | false | 融合客户端 |
-| `start_video` | false | RTSP 推流脚本 |
 
 实机首次启动不要直接依赖通用入口的运动模块默认值；优先使用 `autonomy.launch` 的保守默认值，分阶段启动导航和控制。
 
@@ -84,7 +84,8 @@ ROS：ROS1 Noetic
 | map recorder | `ground_air_mapping` | `/cloud_registered`、`/map` | mapping status 和三项服务 | 建图身份链由 TF owner 管理 |
 | `ground_air_map_manager` | `ground_air_localization` | 地图目录 | `/ground_air/load_map`、`/map`、map changed | 否 |
 | `ground_air_global_relocalizer` | `ground_air_localization` | 地图 PCD、注册点云、里程计 | valid、pose、fitness、rmse、变换结果 | 不直接抢占全局 TF |
-| `ground_air_world_tf_owner` | `ground_air_localization` | 定位有效性和变换结果 | `/tf` | 唯一 `world → camera_init` |
+| `ground_air_world_tf_owner` | `ground_air_localization` | 定位有效性和变换结果 | `/tf` | 唯一 `map → odom` |
+| `ground_air_operation_node.py` | `car_bringup` | launch 参数、地图/定位服务 | 将真实服务结果输出到 roslaunch | 否 |
 | `move_base` | `move_base` | `/map`、TF、里程计、实时点云、目标 | 路径、costmap、`/navigation/cmd_vel` | 否 |
 | `ground_air_mode_manager` | `ground_air_control` | MAVROS 状态、空中速度 | VehicleStatus 和控制服务 | 否 |
 | `ground_air_cmd_vel_router` | `ground_air_control` | `/navigation/cmd_vel`、VehicleStatus | `/ground/cmd_vel`、`/air/cmd_vel` | 否 |
@@ -103,14 +104,14 @@ roslaunch --nodes teb_local_planner_tutorials bz_navigation.launch enable_drone_
 
 | 话题 | 类型 | 发布者 | 主要消费者 | frame/说明 | 状态 |
 |---|---|---|---|---|---|
-| `/livox/lidar` | `livox_ros_driver2/CustomMsg` | Livox 驱动 | FAST-LIO | `livox_frame` 或驱动配置 | 已接入 |
-| `/livox/imu` | `sensor_msgs/Imu` | Livox 驱动 | FAST-LIO | 雷达 IMU frame | 已接入 |
+| `/livox/lidar` | `livox_ros_driver2/CustomMsg` | Livox 驱动 | FAST-LIO | `base_link` | 已接入 |
+| `/livox/imu` | `sensor_msgs/Imu` | Livox 驱动 | FAST-LIO | `base_link` | 已接入 |
 | `/Laser_map` | `sensor_msgs/PointCloud2` | FAST-LIO | 调试/地图观察 | `camera_init` | 接口已恢复 |
 | `/cloud_effected` | `sensor_msgs/PointCloud2` | FAST-LIO | 特征调试 | `camera_init` | 接口已恢复 |
 | `/cloud_registered` | `sensor_msgs/PointCloud2` | FAST-LIO | 建图、重定位、平台 | `camera_init` | 已实机验证 |
 | `/cloud_registered_body` | `sensor_msgs/PointCloud2` | FAST-LIO | costmap、融合客户端 | `body` | 避障已验证 |
 | `/Odometry` | `nav_msgs/Odometry` | FAST-LIO | TEB、重定位、适配器 | parent=`camera_init`、child=`body` | 已实机验证 |
-| `/map` | `nav_msgs/OccupancyGrid` | 建图节点或 map_server | move_base、显示 | 历史地图时为 `world` | 已实机验证 |
+| `/map` | `nav_msgs/OccupancyGrid` | 建图节点或 map_server | move_base、显示 | `map` | 已实机验证 |
 
 2026-08-28 已恢复 FAST-LIO 上游命名。旧 `/Laser_map_1`、`/Odometry_loc`、`/cloud_effected_1`、`/cloud_registered_1`、`/cloud_registered_body_1` 不再属于当前源码契约；如果它们仍在线，说明旧进程尚未重启。`/air/cmd_vel` 和 `/body_frame/path` 是独立接口，保留不变。
 
@@ -127,6 +128,16 @@ rostopic echo -n1 /Odometry/header
 ```
 
 ## 6. 建图接口
+
+推荐操作入口：
+
+```bash
+roslaunch car_bringup start_mapping.launch map_id:=site_20260828_01
+# 遥控器低速完成采集后，在另一终端执行：
+roslaunch car_bringup save_mapping.launch
+```
+
+下列话题和服务是上述 launch 使用的公共底层接口，可用于状态监控和开发排障。
 
 ### 6.1 状态话题
 
@@ -165,6 +176,14 @@ rosservice call /ground_air/mapping/cancel "{}"
 
 ## 7. 地图加载和重定位接口
 
+推荐操作入口：
+
+```bash
+roslaunch car_bringup start_relocalization.launch map_id:=site_20260826_01
+```
+
+该入口会自动依次调用地图加载和完全未知位姿重定位服务；默认不开 MAVROS、不启动导航、控制或任务执行器。
+
 ### 7.1 服务
 
 | 服务 | 类型 | 请求 | 响应 |
@@ -189,10 +208,10 @@ timeout: 60.0"
 |---|---|---|
 | `/ground_air/localization/map_changed` | `std_msgs/String` | 当前激活 PCD 路径，触发缓存清理/重载 |
 | `/ground_air/localization/valid` | `std_msgs/Bool` | 全局定位门控状态 |
-| `/ground_air/localization/pose` | `geometry_msgs/PoseStamped` | `world` 下机器人位姿 |
+| `/ground_air/localization/pose` | `geometry_msgs/PoseStamped` | `map` 下机器人位姿 |
 | `/ground_air/localization/fitness` | `std_msgs/Float64` | 配准重叠质量 |
 | `/ground_air/localization/rmse` | `std_msgs/Float64` | 内点 RMSE，单位米 |
-| `/ground_air/localization/map_to_odom` | `geometry_msgs/TransformStamped` | 内部名称沿用 map-to-odom，实际 frame 为 `world → camera_init` |
+| `/ground_air/localization/map_to_odom` | `geometry_msgs/TransformStamped` | 重定位解算出的 `map → odom` 变换 |
 
 质量门限：`fitness≥0.55`、`rmse≤0.30 m`、连续 2 次确认、两次差异≤`0.50 m/0.35 rad`。点云超过 2 秒无更新或连续 3 次跟踪失败后 `valid=False`。
 
@@ -219,7 +238,7 @@ CH5/CH6 已确认典型值：最低约 1050、中间约 1500、最高约 1950。
 
 | 话题/服务 | 类型 | 方向/用途 |
 |---|---|---|
-| `/move_base_simple/goal` | `geometry_msgs/PoseStamped` | 单点目标，frame=`world` |
+| `/move_base_simple/goal` | `geometry_msgs/PoseStamped` | 单点目标，frame=`map` |
 | `/move_base/goal` | `move_base_msgs/MoveBaseActionGoal` | Action 目标 |
 | `/move_base/status` | `actionlib_msgs/GoalStatusArray` | Action 状态 |
 | `/move_base/result` | `move_base_msgs/MoveBaseActionResult` | Action 结果 |
@@ -330,61 +349,53 @@ uint32 goal_count
 
 | 组件 | 默认输入/行为 | 状态 |
 |---|---|---|
-| `spiritwing_web` | 指控平台 WebSocket 适配 | 待平台联调 |
+| `spiritwing_web` | 已从当前 `catkin_ws/src` 删除 | 不再构建或启动 |
 | `lukong_fusion_client` | `/Odometry`、`/cloud_registered_body` 关键帧 HTTP 发送 | 待服务器联调 |
-| `ground_air_video_push` | `spiritwing_camera_push.sh`，RTSP 源 | 待完整链路验收 |
+| WebSocket 指控平台和原 RTSP 推流 | 随 `spiritwing_web` 删除 | 当前不可用，后续需新接口重新实现 |
 
-`ground_air_full.launch` 当前视频默认：
-
-```text
-start_video=false
-video_source=rtsp://192.168.144.25:8554/main.264
-video_camera=front
-```
-
-视频可能不表现为 ROS `sensor_msgs/Image` 话题；诊断时要同时检查推流进程、RTSP 源和平台连接。
+`lukong_fusion_client` 的融合数据上传与已删除的 WebSocket/视频链路不是同一功能。当前不得把“存在融合客户端”表述为“指控平台和视频已可用”。
 
 ## 13. TF 树与唯一发布者
 
 ### 13.1 建图
 
 ```text
-world
-└── camera_init       identity，建图 TF owner
-    └── body          FAST-LIO dynamic
-        └── base_link static
-            └── livox_frame static
+map
+└── odom              identity，建图 TF owner
+    └── camera_init   identity static
+        └── body      FAST-LIO dynamic
+            └── base_link static
 ```
 
 ### 13.2 重定位和导航
 
 ```text
-world
-└── camera_init       仅定位有效时，world TF owner
-    └── body          FAST-LIO dynamic
-        └── base_link static
-            └── livox_frame static
+map
+└── odom              仅定位有效时，全局 TF owner
+    └── camera_init   identity static
+        └── body      FAST-LIO dynamic
+            └── base_link static
 ```
 
 ### 13.3 TF 责任表
 
 | 边 | 类型 | 唯一发布者 |
 |---|---|---|
-| `world → camera_init` | 动态/模式相关 | `ground_air_world_tf_owner` |
+| `map → odom` | 动态/模式相关 | `ground_air_world_tf_owner` |
+| `odom → camera_init` | 静态恒等 | `odom_camera_init_broadcaster` |
 | `camera_init → body` | 动态 | FAST-LIO |
 | `body → base_link` | 静态 | 安装外参发布器 |
-| `base_link → livox_frame` | 静态 | 安装外参发布器 |
 
-禁止：旧 `world → odom → camera_init`、第二个全局 TF 发布者、重复静态外参、同一 child 多 parent。
+禁止：重新引入 `world` 或 `livox_frame`、第二个 `map → odom` 发布者、重复静态外参、同一 child 多 parent。
 
 ### 13.4 检查与导出
 
 ```bash
-rosrun tf tf_echo world camera_init
+rosrun tf tf_echo map odom
+rosrun tf tf_echo odom camera_init
 rosrun tf tf_echo camera_init body
 rosrun tf tf_echo body base_link
-rosrun tf tf_echo base_link livox_frame
-rosrun tf tf_echo world base_link
+rosrun tf tf_echo map base_link
 rosrun tf tf_monitor
 rosrun car_bringup export_tf_tree.py
 ```
@@ -400,7 +411,7 @@ rosrun car_bringup export_tf_tree.py
 
 | 文件 | 生成者 | frame/语义 | 消费者 |
 |---|---|---|---|
-| `cloud_map.pcd` | `ground_air_mapping` | 建图全局点云，加载后对齐 `world` | Open3D 重定位 |
+| `cloud_map.pcd` | `ground_air_mapping` | 建图全局点云，加载后对齐 `map` | Open3D 重定位 |
 | `map.pgm` | `ground_air_mapping` | 二维栅格图像 | map_server |
 | `map.yaml` | `ground_air_mapping` | resolution、origin、image 等 | map_server |
 | `metadata.json` | `ground_air_mapping` | 地图 ID、点数、面积等 | 管理和追溯 |
@@ -491,7 +502,7 @@ catkin_make -j1
 source devel/setup.bash
 ```
 
-2026-08-28 远程完整编译通过；相关七个测试目录共 107 项测试通过。话题恢复涉及 FAST-LIO C++，必须重启进程后再用第 5 节命令确认在线名称。
+2026-08-28 最终远程完整编译通过；注册测试共 71 项，0 failure、0 error。三个新操作 launch 均可展开，`spiritwing_web` 无活动源码、launch 或构建引用；本地与远程抽查的 16 个关键文件校验和一致。话题恢复涉及 FAST-LIO C++，必须重启进程后再用第 5 节命令确认在线名称。
 
 ## 17. 常见问题
 
@@ -606,10 +617,10 @@ grep '^image:' /home/bitcq/catkin_ws/maps/<map_id>/map.yaml
 ### 17.12 TF 出现两个不连通树
 
 ```bash
-rosrun tf tf_echo world camera_init
+rosrun tf tf_echo map odom
+rosrun tf tf_echo odom camera_init
 rosrun tf tf_echo camera_init body
 rosrun tf tf_echo body base_link
-rosrun tf tf_echo base_link livox_frame
 rosrun tf tf_monitor
 ```
 
@@ -629,7 +640,7 @@ rosrun car_bringup export_tf_tree.py
 
 ```bash
 rostopic echo -n1 /map/header
-rosrun tf tf_echo world base_link
+rosrun tf tf_echo map base_link
 rostopic echo -n1 /move_base/global_costmap/costmap
 rosservice call /move_base/make_plan "<填入起终点且 tolerance: 0.0>"
 ```
@@ -696,13 +707,7 @@ rostopic pub -1 /move_base/cancel actionlib_msgs/GoalID "{}"
 
 ### 17.20 视频无画面
 
-```bash
-rosnode list | grep video
-rosparam get /ground_air_video_push
-ps -ef | grep spiritwing_camera_push
-```
-
-同时检查 RTSP 地址、摄像头供电、网络和平台鉴权。没有 ROS Image 话题不一定表示 RTSP 推流未运行。
+当前版本已删除 `spiritwing_web` 及其原 RTSP 推流入口，因此没有对应节点或参数可供排查；“无画面”是当前功能边界，不是通过重启现有 launch 可以恢复的故障。后续若恢复实时图像，应重新定义摄像头输入、编码/传输协议、平台鉴权、状态反馈和断线重连，并作为独立功能包验收。
 
 ### 17.21 仍看到 `_1` 或 `_loc` 旧 FAST-LIO 话题
 
@@ -765,11 +770,11 @@ rostopic echo -n1 /ground_air/localization/pose
 rostopic echo -n1 /ground_air/vehicle_status
 rostopic echo -n1 /mavros/state
 
-rosrun tf tf_echo world camera_init
+rosrun tf tf_echo map odom
+rosrun tf tf_echo odom camera_init
 rosrun tf tf_echo camera_init body
 rosrun tf tf_echo body base_link
-rosrun tf tf_echo base_link livox_frame
-rosrun tf tf_echo world base_link
+rosrun tf tf_echo map base_link
 rosrun tf tf_monitor
 
 rosparam get /move_base/recovery_behavior_enabled

@@ -66,6 +66,16 @@ class LocalizationRosContractTests(unittest.TestCase):
         self.assertIn('name="ground_air_world_tf_owner"', launch)
         self.assertIn('value="localization"', launch)
 
+    def test_relocalizer_separates_scan_frame_from_output_odom_frame(self):
+        launch = (ROOT / "launch" / "localization.launch").read_text(encoding="utf-8")
+        source = (ROOT / "src" / "global_relocalizer_node.cpp").read_text(encoding="utf-8")
+        self.assertIn('name="map_frame" default="map"', launch)
+        self.assertIn('name="odom_frame" default="odom"', launch)
+        self.assertIn('name="scan_frame" default="camera_init"', launch)
+        self.assertIn('name="scan_frame" value="$(arg scan_frame)"', launch)
+        self.assertIn('"scan_frame", scan_frame_, "camera_init"', source)
+        self.assertIn("latest_scan_frame_ != scan_frame_", source)
+
     def test_open3d_location_is_configurable_not_hardcoded(self):
         text = (ROOT / "CMakeLists.txt").read_text(encoding="utf-8")
         self.assertIn("find_package(Open3D 0.14.1 REQUIRED)", text)

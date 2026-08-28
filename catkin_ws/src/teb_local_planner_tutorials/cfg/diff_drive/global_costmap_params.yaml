@@ -1,5 +1,5 @@
 global_costmap:
-  global_frame: world
+  global_frame: map
   robot_base_frame: base_link
   update_frequency: 2.0
   publish_frequency: 2.0
@@ -14,4 +14,3 @@ global_costmap:
 
 
 # - {name: obstacle_layer,          type: "costmap_2d::VoxelLayer"}
-

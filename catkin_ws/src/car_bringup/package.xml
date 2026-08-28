@@ -69,11 +69,11 @@
   <exec_depend>ground_air_localization</exec_depend>
   <exec_depend>ground_air_mapping</exec_depend>
   <exec_depend>ground_air_mission</exec_depend>
+  <exec_depend>ground_air_msgs</exec_depend>
   <exec_depend>livox_ros_driver2</exec_depend>
   <exec_depend>lukong_fusion_client</exec_depend>
   <exec_depend>mavros</exec_depend>
   <exec_depend>pcl_test</exec_depend>
-  <exec_depend>spiritwing_web</exec_depend>
   <exec_depend>teb_local_planner_tutorials</exec_depend>
   <exec_depend>vision_to_mavros</exec_depend>
 

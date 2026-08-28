@@ -5,6 +5,14 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include <geometry_msgs/Twist.h>
+#include <ground_air_msgs/LoadMap.h>
+#include <ground_air_msgs/SaveMapping.h>
+#include <ground_air_msgs/StartMapping.h>
+#include <ground_air_msgs/MissionStatus.h>
+#include <ground_air_msgs/Relocalize.h>
+#include <ground_air_msgs/SetEmergencyStop.h>
+#include <ground_air_msgs/SubmitMission.h>
+#include <ground_air_msgs/VehicleStatus.h>
 #include <mavros_msgs/CommandBool.h>
 #include <mavros_msgs/CommandTOL.h>
 #include <mavros_msgs/ExtendedState.h>
@@ -17,6 +25,7 @@
 #include <sensor_msgs/PointCloud2.h>
 #include <sensor_msgs/point_cloud2_iterator.h>
 #include <std_msgs/String.h>
+#include <std_srvs/Trigger.h>
 
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2/LinearMath/Matrix3x3.h>
@@ -202,8 +211,8 @@ private:
         std::string area_id = "123";
         std::string file_upload_url;
         std::string file_download_url;
-        std::string command_backend = "json_placeholder";
-        std::string navigation_backend = "patrol_points";
+        std::string command_backend = "ground_air_services";
+        std::string navigation_backend = "ground_air_mission";
 
         std::string mavros_state_topic = "/mavros/state";
         std::string mavros_extended_topic = "/mavros/extended_state";
@@ -225,10 +234,22 @@ private:
         std::string set_mode_srv = "/mavros/set_mode";
         std::string takeoff_srv = "/mavros/cmd/takeoff";
         std::string land_srv = "/mavros/cmd/land";
+        std::string ground_air_load_map_srv = "/ground_air/load_map";
+        std::string ground_air_relocalize_srv = "/ground_air/relocalize";
+        std::string ground_air_mapping_start_srv = "/ground_air/mapping/start";
+        std::string ground_air_mapping_save_srv = "/ground_air/mapping/save";
+        std::string ground_air_mission_submit_srv = "/ground_air/mission/submit";
+        std::string ground_air_mission_start_srv = "/ground_air/mission/start";
+        std::string ground_air_mission_pause_srv = "/ground_air/mission/pause";
+        std::string ground_air_mission_resume_srv = "/ground_air/mission/resume";
+        std::string ground_air_mission_cancel_srv = "/ground_air/mission/cancel";
+        std::string ground_air_takeoff_srv = "/ground_air/takeoff";
+        std::string ground_air_land_srv = "/ground_air/land";
+        std::string ground_air_estop_srv = "/ground_air/emergency_stop";
 
-        std::string task_frame_id = "world";
-        std::string move_base_goal_frame_id = "world";
-        std::string initialpose_frame_id = "world";
+        std::string task_frame_id = "map";
+        std::string move_base_goal_frame_id = "map";
+        std::string initialpose_frame_id = "map";
 
         double default_takeoff_altitude = 1.0;
         double manual_speed = 0.5;
@@ -276,6 +297,8 @@ private:
     ros::Subscriber sub_patrol_state_text_;
     ros::Subscriber sub_pointcloud_;
     ros::Subscriber sub_map_;
+    ros::Subscriber sub_ground_air_vehicle_status_;
+    ros::Subscriber sub_ground_air_mission_status_;
 
     ros::Publisher pub_patrol_points_;
     ros::Publisher pub_move_base_goal_;
@@ -289,6 +312,18 @@ private:
     ros::ServiceClient cli_set_mode_;
     ros::ServiceClient cli_takeoff_;
     ros::ServiceClient cli_land_;
+    ros::ServiceClient cli_ground_air_load_map_;
+    ros::ServiceClient cli_ground_air_relocalize_;
+    ros::ServiceClient cli_ground_air_mapping_start_;
+    ros::ServiceClient cli_ground_air_mapping_save_;
+    ros::ServiceClient cli_ground_air_mission_submit_;
+    ros::ServiceClient cli_ground_air_mission_start_;
+    ros::ServiceClient cli_ground_air_mission_pause_;
+    ros::ServiceClient cli_ground_air_mission_resume_;
+    ros::ServiceClient cli_ground_air_mission_cancel_;
+    ros::ServiceClient cli_ground_air_takeoff_;
+    ros::ServiceClient cli_ground_air_land_;
+    ros::ServiceClient cli_ground_air_estop_;
 
     ros::Timer status_timer_;
     ros::Timer manual_timer_;
@@ -312,6 +347,8 @@ private:
     nav_msgs::OccupancyGrid latest_map_;
     mavros_msgs::State latest_mavros_state_;
     mavros_msgs::ExtendedState latest_extended_state_;
+    ground_air_msgs::VehicleStatus latest_vehicle_status_;
+    ground_air_msgs::MissionStatus latest_mission_status_;
     sensor_msgs::BatteryState latest_battery_;
     geometry_msgs::Twist manual_twist_;
     std::vector<std::array<float, 3>> latest_point_cloud_;
@@ -370,6 +407,18 @@ private:
         cfg_.set_mode_srv = yamlValue<std::string>(services, "mavros_set_mode", cfg_.set_mode_srv);
         cfg_.takeoff_srv = yamlValue<std::string>(services, "mavros_takeoff", cfg_.takeoff_srv);
         cfg_.land_srv = yamlValue<std::string>(services, "mavros_land", cfg_.land_srv);
+        cfg_.ground_air_load_map_srv = yamlValue<std::string>(services, "ground_air_load_map", cfg_.ground_air_load_map_srv);
+        cfg_.ground_air_relocalize_srv = yamlValue<std::string>(services, "ground_air_relocalize", cfg_.ground_air_relocalize_srv);
+        cfg_.ground_air_mapping_start_srv = yamlValue<std::string>(services, "ground_air_mapping_start", cfg_.ground_air_mapping_start_srv);
+        cfg_.ground_air_mapping_save_srv = yamlValue<std::string>(services, "ground_air_mapping_save", cfg_.ground_air_mapping_save_srv);
+        cfg_.ground_air_mission_submit_srv = yamlValue<std::string>(services, "ground_air_mission_submit", cfg_.ground_air_mission_submit_srv);
+        cfg_.ground_air_mission_start_srv = yamlValue<std::string>(services, "ground_air_mission_start", cfg_.ground_air_mission_start_srv);
+        cfg_.ground_air_mission_pause_srv = yamlValue<std::string>(services, "ground_air_mission_pause", cfg_.ground_air_mission_pause_srv);
+        cfg_.ground_air_mission_resume_srv = yamlValue<std::string>(services, "ground_air_mission_resume", cfg_.ground_air_mission_resume_srv);
+        cfg_.ground_air_mission_cancel_srv = yamlValue<std::string>(services, "ground_air_mission_cancel", cfg_.ground_air_mission_cancel_srv);
+        cfg_.ground_air_takeoff_srv = yamlValue<std::string>(services, "ground_air_takeoff", cfg_.ground_air_takeoff_srv);
+        cfg_.ground_air_land_srv = yamlValue<std::string>(services, "ground_air_land", cfg_.ground_air_land_srv);
+        cfg_.ground_air_estop_srv = yamlValue<std::string>(services, "ground_air_estop", cfg_.ground_air_estop_srv);
 
         const YAML::Node frames = sw["frames"];
         cfg_.task_frame_id = yamlValue<std::string>(frames, "task_frame_id", cfg_.task_frame_id);
@@ -422,6 +471,10 @@ private:
         sub_patrol_state_text_ = nh_.subscribe(cfg_.patrol_state_text_topic, 10, &SpiritWingWebNode::onPatrolStateText, this);
         sub_pointcloud_ = nh_.subscribe(cfg_.pointcloud_topic, 1, &SpiritWingWebNode::onPointCloud, this);
         sub_map_ = nh_.subscribe(cfg_.map_topic, 1, &SpiritWingWebNode::onMap, this);
+        sub_ground_air_vehicle_status_ = nh_.subscribe(
+            "/ground_air/vehicle_status", 10, &SpiritWingWebNode::onGroundAirVehicleStatus, this);
+        sub_ground_air_mission_status_ = nh_.subscribe(
+            "/ground_air/mission/status", 10, &SpiritWingWebNode::onGroundAirMissionStatus, this);
 
         pub_patrol_points_ = nh_.advertise<nav_msgs::Path>(cfg_.patrol_points_topic, 1, true);
         pub_move_base_goal_ = nh_.advertise<geometry_msgs::PoseStamped>(cfg_.move_base_goal_topic, 1);
@@ -435,6 +488,18 @@ private:
         cli_set_mode_ = nh_.serviceClient<mavros_msgs::SetMode>(cfg_.set_mode_srv);
         cli_takeoff_ = nh_.serviceClient<mavros_msgs::CommandTOL>(cfg_.takeoff_srv);
         cli_land_ = nh_.serviceClient<mavros_msgs::CommandTOL>(cfg_.land_srv);
+        cli_ground_air_load_map_ = nh_.serviceClient<ground_air_msgs::LoadMap>(cfg_.ground_air_load_map_srv);
+        cli_ground_air_relocalize_ = nh_.serviceClient<ground_air_msgs::Relocalize>(cfg_.ground_air_relocalize_srv);
+        cli_ground_air_mapping_start_ = nh_.serviceClient<ground_air_msgs::StartMapping>(cfg_.ground_air_mapping_start_srv);
+        cli_ground_air_mapping_save_ = nh_.serviceClient<ground_air_msgs::SaveMapping>(cfg_.ground_air_mapping_save_srv);
+        cli_ground_air_mission_submit_ = nh_.serviceClient<ground_air_msgs::SubmitMission>(cfg_.ground_air_mission_submit_srv);
+        cli_ground_air_mission_start_ = nh_.serviceClient<std_srvs::Trigger>(cfg_.ground_air_mission_start_srv);
+        cli_ground_air_mission_pause_ = nh_.serviceClient<std_srvs::Trigger>(cfg_.ground_air_mission_pause_srv);
+        cli_ground_air_mission_resume_ = nh_.serviceClient<std_srvs::Trigger>(cfg_.ground_air_mission_resume_srv);
+        cli_ground_air_mission_cancel_ = nh_.serviceClient<std_srvs::Trigger>(cfg_.ground_air_mission_cancel_srv);
+        cli_ground_air_takeoff_ = nh_.serviceClient<std_srvs::Trigger>(cfg_.ground_air_takeoff_srv);
+        cli_ground_air_land_ = nh_.serviceClient<std_srvs::Trigger>(cfg_.ground_air_land_srv);
+        cli_ground_air_estop_ = nh_.serviceClient<ground_air_msgs::SetEmergencyStop>(cfg_.ground_air_estop_srv);
     }
 
     void setupWebSocket() {
@@ -494,7 +559,8 @@ private:
         // UAV-specific extensions. The public protocol may or may not send these.
         handlers_["takeoff_down"] = [this](const json& j) { handleTakeoff(j); };
         handlers_["land_down"] = [this](const json& j) { handleLand(j); };
-        handlers_["emergency_stop_down"] = [this](const json& j) { handleEmergencyStop(j); };
+        handlers_["emergency_stop_down"] = [this](const json& j) { handleEmergencyStop(j, true); };
+        handlers_["emergency_reset_down"] = [this](const json& j) { handleEmergencyStop(j, false); };
     }
 
     void sendJson(const json& j) {
@@ -542,9 +608,19 @@ private:
     void handleSetCurrentMap(const json& j) {
         updateAreaAndMap(j);
         auto r = baseResponse("set_current_map_up");
-        r["code"] = CODE_OK;
-        r["reason"] = "map id accepted; SpiritWing historical map load API is not available in current documents";
+        ground_air_msgs::LoadMap srv;
+        {
+            std::lock_guard<std::mutex> lk(mutex_);
+            srv.request.map_id = current_map_id_;
+        }
+        srv.request.source_uri = j.value("source_uri", j.value("map_directory", std::string{}));
+        const bool ok = cli_ground_air_load_map_.call(srv) && srv.response.success;
+        r["code"] = ok ? CODE_OK : CODE_UNHEALTHY;
+        r["reason"] = ok ? srv.response.message :
+            (srv.response.message.empty() ? "map activation service failed" : srv.response.message);
         sendJson(r);
+
+        if (!ok) return;
 
         auto done = baseResponse("set_current_map_complete_up");
         {
@@ -558,41 +634,36 @@ private:
         updateAreaAndMap(j);
         auto r = baseResponse("relocalize_pose_up");
         try {
-            if (!j.contains("pose")) {
-                r["code"] = CODE_MISSING_PARAM;
-                r["reason"] = "missing field: pose";
-                sendJson(r);
-                return;
+            ground_air_msgs::Relocalize srv;
+            srv.request.use_initial_guess = j.contains("pose");
+            srv.request.timeout = j.value("timeout", 60.0);
+            srv.request.initial_guess.header.stamp = ros::Time::now();
+            srv.request.initial_guess.header.frame_id = cfg_.initialpose_frame_id;
+            srv.request.initial_guess.pose.pose.orientation.w = 1.0;
+            if (srv.request.use_initial_guess) {
+                const auto& pose = j.at("pose");
+                const auto& position = pose.at("position");
+                srv.request.initial_guess.pose.pose.position.x = position.value("x", 0.0);
+                srv.request.initial_guess.pose.pose.position.y = position.value("y", 0.0);
+                srv.request.initial_guess.pose.pose.position.z = position.value("z", 0.0);
+                if (pose.contains("orientation")) {
+                    const auto& o = pose.at("orientation");
+                    geometry_msgs::Quaternion q;
+                    q.x = o.value("x", 0.0);
+                    q.y = o.value("y", 0.0);
+                    q.z = o.value("z", 0.0);
+                    q.w = o.value("w", 0.0);
+                    if (std::abs(q.x) + std::abs(q.y) + std::abs(q.z) + std::abs(q.w) < 1e-6) {
+                        q = quaternionFromYaw(o.value("yaw", 0.0));
+                    }
+                    srv.request.initial_guess.pose.pose.orientation = q;
+                }
             }
-            const auto& pose = j["pose"];
-            geometry_msgs::PoseWithCovarianceStamped msg;
-            msg.header.stamp = ros::Time::now();
-            msg.header.frame_id = cfg_.initialpose_frame_id;
-            msg.pose.pose.position.x = pose["position"].value("x", 0.0);
-            msg.pose.pose.position.y = pose["position"].value("y", 0.0);
-            msg.pose.pose.position.z = pose["position"].value("z", 0.0);
-
-            const auto& o = pose["orientation"];
-            geometry_msgs::Quaternion q;
-            q.x = o.value("x", 0.0);
-            q.y = o.value("y", 0.0);
-            q.z = o.value("z", 0.0);
-            q.w = o.value("w", 0.0);
-            if (std::abs(q.x) + std::abs(q.y) + std::abs(q.z) + std::abs(q.w) < 1e-6) {
-                q = quaternionFromYaw(o.value("yaw", 0.0));
-            }
-            msg.pose.pose.orientation = q;
-            msg.pose.covariance[0] = 0.25;
-            msg.pose.covariance[7] = 0.25;
-            msg.pose.covariance[35] = 0.0685;
-            pub_initialpose_.publish(msg);
-
-            {
-                std::lock_guard<std::mutex> lk(mutex_);
-                relocalized_ = true;
-                robot_state_ = "LOCALIZING";
-            }
-            r["code"] = CODE_OK;
+            const bool ok = cli_ground_air_relocalize_.call(srv) && srv.response.success;
+            r["code"] = ok ? CODE_OK : CODE_UNHEALTHY;
+            r["reason"] = srv.response.message;
+            r["fitness"] = srv.response.fitness;
+            r["rmse"] = srv.response.rmse;
             sendJson(r);
         } catch (const std::exception& e) {
             r["code"] = CODE_MISSING_PARAM;
@@ -651,6 +722,56 @@ private:
         updateAreaAndMap(j);
         auto r = baseResponse("navigation_start_up");
 
+        if (cfg_.navigation_backend == "ground_air_mission") {
+            std::vector<GoalPoint> goals;
+            {
+                std::lock_guard<std::mutex> lk(mutex_);
+                goals = goals_;
+            }
+            if (goals.empty()) {
+                r["code"] = CODE_REJECTED_STATE;
+                r["reason"] = "no cached target_points; send multi_goal_down first";
+                sendJson(r);
+                return;
+            }
+
+            ground_air_msgs::SubmitMission mission;
+            auto& request = mission.request;
+            request.mission_id = j.value(
+                "mission_id", std::string("platform-") + std::to_string(ros::Time::now().toNSec()));
+            for (const auto& goal : goals) {
+                geometry_msgs::PoseStamped pose;
+                pose.header.stamp = ros::Time::now();
+                pose.header.frame_id = cfg_.task_frame_id;
+                pose.pose.position.x = goal.x;
+                pose.pose.position.y = goal.y;
+                pose.pose.position.z = goal.z;
+                pose.pose.orientation = goal.q;
+                request.goals.push_back(pose);
+            }
+            if (!cli_ground_air_mission_submit_.call(mission) || !mission.response.accepted) {
+                r["code"] = CODE_REJECTED_STATE;
+                r["reason"] = mission.response.message.empty() ?
+                    "mission submit service failed" : mission.response.message;
+                sendJson(r);
+                return;
+            }
+            std_srvs::Trigger start;
+            const bool ok = cli_ground_air_mission_start_.call(start) && start.response.success;
+            {
+                std::lock_guard<std::mutex> lk(mutex_);
+                navigating_active_ = ok;
+                manual_active_ = false;
+                robot_state_ = ok ? "NAVIGATING" : "IDLE";
+            }
+            r["code"] = ok ? CODE_OK : CODE_REJECTED_STATE;
+            r["reason"] = start.response.message;
+            r["goal_count"] = mission.response.goal_count;
+            r["mission_id"] = request.mission_id;
+            sendJson(r);
+            return;
+        }
+
         nav_msgs::Path path;
         {
             std::lock_guard<std::mutex> lk(mutex_);
@@ -691,6 +812,15 @@ private:
     }
 
     void handleNavigationPause(const json&) {
+        if (cfg_.navigation_backend == "ground_air_mission") {
+            std_srvs::Trigger srv;
+            const bool ok = cli_ground_air_mission_pause_.call(srv) && srv.response.success;
+            auto r = baseResponse("navigation_pause_up");
+            r["code"] = ok ? CODE_OK : CODE_REJECTED_STATE;
+            r["reason"] = srv.response.message;
+            sendJson(r);
+            return;
+        }
         cancelNavigationGoal("navigation_pause");
         publishHover("navigation_pause");
         {
@@ -705,6 +835,15 @@ private:
     }
 
     void handleNavigationResume(const json&) {
+        if (cfg_.navigation_backend == "ground_air_mission") {
+            std_srvs::Trigger srv;
+            const bool ok = cli_ground_air_mission_resume_.call(srv) && srv.response.success;
+            auto r = baseResponse("navigation_resume_up");
+            r["code"] = ok ? CODE_OK : CODE_REJECTED_STATE;
+            r["reason"] = srv.response.message;
+            sendJson(r);
+            return;
+        }
         handleNavigationStart(json::object());
         auto r = baseResponse("navigation_resume_up");
         r["code"] = CODE_OK;
@@ -712,6 +851,15 @@ private:
     }
 
     void handleNavigationStop(const json&) {
+        if (cfg_.navigation_backend == "ground_air_mission") {
+            std_srvs::Trigger srv;
+            const bool ok = cli_ground_air_mission_cancel_.call(srv) && srv.response.success;
+            auto r = baseResponse("navigation_stop_up");
+            r["code"] = ok ? CODE_OK : CODE_REJECTED_STATE;
+            r["reason"] = srv.response.message;
+            sendJson(r);
+            return;
+        }
         cancelNavigationGoal("navigation_stop");
         publishHover("navigation_stop");
         {
@@ -789,38 +937,57 @@ private:
 
     void handleSlamStart(const json& j) {
         updateAreaAndMap(j);
+        ground_air_msgs::StartMapping srv;
         {
+            std::lock_guard<std::mutex> lk(mutex_);
+            srv.request.map_id = current_map_id_;
+        }
+        const bool ok = cli_ground_air_mapping_start_.call(srv) && srv.response.success;
+        if (ok) {
             std::lock_guard<std::mutex> lk(mutex_);
             mapping_active_ = true;
             robot_state_ = "MAPPING";
         }
-        runScriptAsync(cfg_.mapping_script, "mapping");
-        publishCommandJson("slam_start", {{"map_id", j.value("map_id", "")}});
+        if (ok) publishCommandJson("slam_start", {{"map_id", srv.request.map_id}});
         auto r = baseResponse("slam_start_up");
-        r["code"] = CODE_OK;
+        r["code"] = ok ? CODE_OK : CODE_UNHEALTHY;
+        r["reason"] = srv.response.message.empty() ?
+            (ok ? "mapping started" : "mapping start service failed") : srv.response.message;
+        r["map_id"] = srv.request.map_id;
         sendJson(r);
     }
 
     void handleSlamStop(const json&) {
-        {
+        ground_air_msgs::SaveMapping srv;
+        const bool ok = cli_ground_air_mapping_save_.call(srv) && srv.response.success;
+        if (ok) {
             std::lock_guard<std::mutex> lk(mutex_);
             mapping_active_ = false;
             robot_state_ = "IDLE";
+            generated_pcd_path_ = srv.response.map_directory + "/cloud_map.pcd";
+            generated_pgm_path_ = srv.response.map_directory + "/map.pgm";
+            generated_yaml_path_ = srv.response.map_directory + "/map.yaml";
+            last_map_stats_.point_count = static_cast<std::size_t>(srv.response.point_count);
+            last_map_stats_.map_area = srv.response.map_area;
         }
-        publishCommandJson("slam_stop", {});
+        if (ok) publishCommandJson("slam_stop", {});
         auto r = baseResponse("slam_stop_up");
-        r["code"] = CODE_OK;
+        r["code"] = ok ? CODE_OK : CODE_UNHEALTHY;
+        r["reason"] = srv.response.message.empty() ?
+            (ok ? "map saved" : "mapping save service failed") : srv.response.message;
+        r["map_directory"] = srv.response.map_directory;
+        r["point_count"] = srv.response.point_count;
+        r["map_area"] = srv.response.map_area;
         sendJson(r);
-        saveLatestMapFromOccupancyGrid();
-        uploadMapFiles();
+        if (ok) uploadMapFiles();
     }
 
-    void handleTakeoff(const json& j) {
+    void handleTakeoff(const json&) {
         auto r = baseResponse("takeoff_up");
-        const double alt = j.value("altitude", cfg_.default_takeoff_altitude);
+        const double alt = cfg_.default_takeoff_altitude;
         const bool ok = publishTakeoff(alt);
         r["code"] = ok ? CODE_OK : CODE_UNHEALTHY;
-        r["altitude"] = alt;
+        r["altitude"] = cfg_.default_takeoff_altitude;
         if (!ok) r["reason"] = "takeoff command failed";
         sendJson(r);
     }
@@ -833,21 +1000,35 @@ private:
         sendJson(r);
     }
 
-    void handleEmergencyStop(const json&) {
-        publishHover("emergency_stop");
-        publishCommandJson("emergency_stop", {});
-        {
+    void handleEmergencyStop(const json&, bool active) {
+        ground_air_msgs::SetEmergencyStop srv;
+        srv.request.active = active;
+        const bool ok = cli_ground_air_estop_.call(srv) && srv.response.success;
+        publishCommandJson(active ? "emergency_stop" : "emergency_reset", {});
+        if (active) {
+            publishHover("emergency_stop");
             std::lock_guard<std::mutex> lk(mutex_);
             navigating_active_ = false;
             manual_active_ = false;
             robot_state_ = "FAULT";
+        } else if (ok) {
+            std::lock_guard<std::mutex> lk(mutex_);
+            robot_state_ = srv.response.status.localized ? "IDLE" : "LOCALIZING";
         }
-        auto r = baseResponse("emergency_stop_up");
-        r["code"] = CODE_OK;
+        auto r = baseResponse(active ? "emergency_stop_up" : "emergency_reset_up");
+        r["code"] = ok ? CODE_OK : CODE_UNHEALTHY;
+        r["reason"] = srv.response.message;
         sendJson(r);
     }
 
     bool publishTakeoff(double altitude) {
+        if (cfg_.command_backend == "ground_air_services") {
+            std_srvs::Trigger srv;
+            const bool ok = cli_ground_air_takeoff_.call(srv) && srv.response.success;
+            ROS_INFO("[spiritwing_web] supervised takeoff fixed_altitude=%.2f ok=%s",
+                     cfg_.default_takeoff_altitude, ok ? "true" : "false");
+            return ok;
+        }
         if (cfg_.command_backend == "mavros") {
             if (cfg_.set_mode_before_mavros_control) setMavrosMode(cfg_.mavros_control_mode);
             mavros_msgs::CommandBool arm;
@@ -873,6 +1054,12 @@ private:
     }
 
     bool publishLand() {
+        if (cfg_.command_backend == "ground_air_services") {
+            std_srvs::Trigger srv;
+            const bool ok = cli_ground_air_land_.call(srv) && srv.response.success;
+            ROS_INFO("[spiritwing_web] supervised land ok=%s", ok ? "true" : "false");
+            return ok;
+        }
         if (cfg_.command_backend == "mavros") {
             mavros_msgs::CommandTOL srv;
             srv.request.yaw = currentYaw();
@@ -1252,6 +1439,8 @@ private:
         mavros_msgs::State mavros_state;
         mavros_msgs::ExtendedState ext;
         sensor_msgs::BatteryState battery;
+        ground_air_msgs::VehicleStatus vehicle_status;
+        ground_air_msgs::MissionStatus mission_status;
         std::string state;
         bool odom_valid = false;
         bool relocalized = false;
@@ -1262,6 +1451,8 @@ private:
             mavros_state = latest_mavros_state_;
             ext = latest_extended_state_;
             battery = latest_battery_;
+            vehicle_status = latest_vehicle_status_;
+            mission_status = latest_mission_status_;
             state = robot_state_;
             relocalized = relocalized_;
             map_id = current_map_id_;
@@ -1293,6 +1484,18 @@ private:
             {"armed", mavros_state.armed},
             {"mode", mavros_state.mode},
             {"landed_state", ext.landed_state}
+        };
+        msg["ground_air"] = {
+            {"mode", vehicle_status.mode},
+            {"localized", vehicle_status.localized},
+            {"emergency_stop", vehicle_status.emergency_stop},
+            {"altitude", vehicle_status.altitude},
+            {"detail", vehicle_status.detail},
+            {"mission_state", mission_status.state},
+            {"mission_index", mission_status.current_index},
+            {"mission_total", mission_status.total_goals},
+            {"mission_id", mission_status.mission_id},
+            {"mission_detail", mission_status.detail}
         };
         msg["node_status"] = {
             {"localization", {
@@ -1419,15 +1622,14 @@ private:
 
         std::vector<std::array<float, 3>> cloud;
         ros::Time cloud_time;
-        bool mapping = false;
         {
             std::lock_guard<std::mutex> lk(mutex_);
-            mapping = mapping_active_;
             cloud = latest_point_cloud_;
             cloud_time = last_point_cloud_time_;
         }
 
-        if (mapping || cloud.empty() || cloud_time.isZero()) {
+        // 手控建图与地图融合建图过程中都要持续上传实时点云（不再因 mapping_active_ 暂停）。
+        if (cloud.empty() || cloud_time.isZero()) {
             realtime_cloud_uploading_ = false;
             return;
         }
@@ -1474,6 +1676,42 @@ private:
             }
             realtime_cloud_uploading_ = false;
         }).detach();
+    }
+
+    void onGroundAirVehicleStatus(const ground_air_msgs::VehicleStatus::ConstPtr& msg) {
+        std::lock_guard<std::mutex> lk(mutex_);
+        latest_vehicle_status_ = *msg;
+        relocalized_ = msg->localized;
+        if (msg->emergency_stop || msg->mode == ground_air_msgs::VehicleStatus::ESTOP) {
+            robot_state_ = "FAULT";
+        } else if (msg->mode == ground_air_msgs::VehicleStatus::TAKEOFF) {
+            robot_state_ = "TAKING_OFF";
+        } else if (msg->mode == ground_air_msgs::VehicleStatus::LANDING) {
+            robot_state_ = "LANDING";
+        }
+    }
+
+    void onGroundAirMissionStatus(const ground_air_msgs::MissionStatus::ConstPtr& msg) {
+        std::lock_guard<std::mutex> lk(mutex_);
+        latest_mission_status_ = *msg;
+        if (msg->state == ground_air_msgs::MissionStatus::RUNNING ||
+            msg->state == ground_air_msgs::MissionStatus::DWELLING) {
+            navigating_active_ = true;
+            robot_state_ = "NAVIGATING";
+        } else if (msg->state == ground_air_msgs::MissionStatus::PAUSED) {
+            navigating_active_ = false;
+            robot_state_ = "NAVIGATING_PAUSED";
+        } else if (msg->state == ground_air_msgs::MissionStatus::WAITING_FOR_LAND) {
+            navigating_active_ = false;
+            robot_state_ = "WAITING_FOR_LAND";
+        } else if (msg->state == ground_air_msgs::MissionStatus::FAILED) {
+            navigating_active_ = false;
+            robot_state_ = "FAULT";
+        } else if (msg->state == ground_air_msgs::MissionStatus::SUCCEEDED ||
+                   msg->state == ground_air_msgs::MissionStatus::CANCELED) {
+            navigating_active_ = false;
+            robot_state_ = "IDLE";
+        }
     }
 
     void onMavrosState(const mavros_msgs::State::ConstPtr& msg) {

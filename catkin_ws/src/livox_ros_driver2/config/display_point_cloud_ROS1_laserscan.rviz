@@ -112,7 +112,7 @@ Visualization Manager:
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: livox_frame
+    Fixed Frame: base_link
     Frame Rate: 40
   Name: root
   Tools:

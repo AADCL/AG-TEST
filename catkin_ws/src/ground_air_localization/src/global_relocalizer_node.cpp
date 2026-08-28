@@ -32,8 +32,9 @@ public:
     GlobalRelocalizer() : nh_(), pnh_("~") {
         pnh_.param<std::string>("scan_topic", scan_topic_, "/cloud_registered");
         pnh_.param<std::string>("odom_topic", odom_topic_, "/Odometry");
-        pnh_.param<std::string>("map_frame", map_frame_, "world");
-        pnh_.param<std::string>("odom_frame", odom_frame_, "camera_init");
+        pnh_.param<std::string>("map_frame", map_frame_, "map");
+        pnh_.param<std::string>("odom_frame", odom_frame_, "odom");
+        pnh_.param<std::string>("scan_frame", scan_frame_, "camera_init");
         pnh_.param<std::string>("base_frame", base_frame_, "base_link");
         pnh_.param("coarse_voxel", coarse_voxel_, 0.40);
         pnh_.param("fine_voxel", fine_voxel_, 0.10);
@@ -191,9 +192,9 @@ private:
             error = "timed out waiting for a fresh registered point cloud";
             return false;
         }
-        if (!latest_scan_frame_.empty() && latest_scan_frame_ != odom_frame_) {
+        if (!latest_scan_frame_.empty() && latest_scan_frame_ != scan_frame_) {
             error = "registered cloud frame is '" + latest_scan_frame_ +
-                    "', expected '" + odom_frame_ + "'";
+                    "', expected '" + scan_frame_ + "'";
             return false;
         }
         if ((ros::Time::now() - latest_scan_stamp_).toSec() > scan_stale_timeout_) {
@@ -505,6 +506,7 @@ private:
     std::string odom_topic_;
     std::string map_frame_;
     std::string odom_frame_;
+    std::string scan_frame_;
     std::string base_frame_;
     double coarse_voxel_;
     double fine_voxel_;

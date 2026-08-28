@@ -39,7 +39,7 @@
 - Modify: `src/teb_local_planner_tutorials/cfg/diff_drive/costmap_common_params_local.yaml`
 
 **Interfaces:**
-- Consumes: `/map`, `/cloud_registered_body_1`, `/Odometry_loc`, and the `world -> base_link` TF chain.
+- Consumes: `/map`, `/cloud_registered_body`, `/Odometry`, and the `map -> odom -> camera_init -> body -> base_link` TF chain.
 - Produces: GlobalPlanner paths and TEB commands on `/navigation/cmd_vel` when navigation is later started by an operator.
 
 - [ ] Load `global_planner_params.yaml` inside the move_base node.

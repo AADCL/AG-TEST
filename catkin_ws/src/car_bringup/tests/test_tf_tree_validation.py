@@ -17,24 +17,26 @@ class TfTreeValidationTests(unittest.TestCase):
 
     def test_accepts_exact_target_chain(self):
         parents = {
-            "camera_init": {"world"},
+            "odom": {"map"},
+            "camera_init": {"odom"},
             "body": {"camera_init"},
             "base_link": {"body"},
-            "livox_frame": {"base_link"},
         }
         self.assertEqual([], self.module.validate_tf_tree(parents))
 
-    def test_rejects_duplicate_parent_missing_edge_and_odom(self):
+    def test_rejects_duplicate_parent_missing_edge_and_forbidden_frames(self):
         parents = {
-            "camera_init": {"world", "odom"},
+            "odom": {"map"},
+            "camera_init": {"odom", "map"},
             "body": {"camera_init"},
-            "livox_frame": {"base_link"},
-            "odom": {"world"},
+            "livox_frame": {"body"},
+            "world": {"map"},
         }
         errors = "\n".join(self.module.validate_tf_tree(parents))
         self.assertIn("multiple parents", errors)
         self.assertIn("missing target edge body -> base_link", errors)
-        self.assertIn("legacy odom frame", errors)
+        self.assertIn("forbidden frame livox_frame", errors)
+        self.assertIn("forbidden frame world", errors)
 
     def test_exporter_invokes_view_frames_and_timestamp_artifacts(self):
         text = (ROOT / "scripts" / "export_tf_tree.py").read_text(encoding="utf-8")

@@ -50,7 +50,7 @@ int main(int argc, char **argv)
     std::string tf_prefix;
 
     nh.param<std::string>("tf_prefix", tf_prefix, "");
-    private_nh.param<std::string>("map_frame", mapFrameId, "world");
+    private_nh.param<std::string>("map_frame", mapFrameId, "map");
     private_nh.param<std::string>("lidar_frame", lidarFrameId, "rslidar");
     if(tf_prefix != "")
     {

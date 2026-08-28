@@ -117,10 +117,13 @@ install(DIRECTORY launch
 catkin_install_python(PROGRAMS
   scripts/export_tf_tree.py
   scripts/fastlio_odometry_adapter.py
+  scripts/ground_air_operation_node.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
-install(FILES scripts/tf_tree_validation.py
+install(FILES
+  scripts/ground_air_operation_core.py
+  scripts/tf_tree_validation.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

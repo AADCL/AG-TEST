@@ -1,6 +1,6 @@
 {
   "map_id": "site_20260826_01",
-  "frame_id": "world",
+  "frame_id": "map",
   "point_cloud": "cloud_map.pcd",
   "occupancy_map": "map.yaml",
   "voxel_size": 0.1,

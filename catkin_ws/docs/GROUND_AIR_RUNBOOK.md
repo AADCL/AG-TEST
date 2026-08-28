@@ -20,24 +20,24 @@ export LD_LIBRARY_PATH=/home/bitcq/opt/open3d-0.14.1/lib:${LD_LIBRARY_PATH}
 ## 手控建图
 
 ```bash
-roslaunch car_bringup manual_mapping.launch start_mavros:=false start_video:=true
+roslaunch car_bringup start_mapping.launch map_id:=<本次地图ID> start_mavros:=false
 ```
 
-平台的 `slam_start_down`/`slam_stop_down` 用于标记建图会话、保存和上传地图。用于后续重定位的地图目录必须同时包含一个 `.pcd`、一个 `.yaml` 及 YAML 引用的栅格图像。
+完成驾驶并停车后，在第二个终端执行 `roslaunch car_bringup save_mapping.launch`。用于后续重定位的地图目录必须同时包含一个 `.pcd`、一个 `.yaml` 及 YAML 引用的栅格图像。
 
 ## 历史地图重定位与自主任务
 
 ```bash
-roslaunch car_bringup autonomy.launch start_mavros:=false start_video:=true
+roslaunch car_bringup start_relocalization.launch map_id:=<地图ID> start_mavros:=false
 ```
 
-推荐服务顺序：
+该 launch 自动完成 `/ground_air/load_map` 和 `/ground_air/relocalize`。定位成功后执行：
 
-1. `/ground_air/load_map`：选择或导入历史地图目录。
-2. `/ground_air/relocalize`：完全未知位姿时令 `use_initial_guess=false`。
-3. `/ground_air/mission/submit`：一次提交整组有序 `PoseStamped[]`。
-4. `/ground_air/mission/start`：开始导航；每点自动停留 2 秒。
-5. 任务中按需调用 `/ground_air/takeoff` 或 `/ground_air/land`。
+1. `/ground_air/mission/submit`：一次提交整组有序 `PoseStamped[]`。
+2. `/ground_air/mission/start`：开始导航；每点自动停留 2 秒。
+3. 任务中按需调用 `/ground_air/takeoff` 或 `/ground_air/land`。
+
+`spiritwing_web` 已从当前工作空间删除，原 WebSocket 平台和 RTSP 推流入口不再由本工作空间启动。
 
 ## 急停
 

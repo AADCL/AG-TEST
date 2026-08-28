@@ -6,8 +6,9 @@
   <arg name="voxel_size" default="0.10" />
   <arg name="max_voxels" default="5000000" />
   <arg name="min_points" default="500" />
-  <arg name="map_frame" default="world" />
-  <arg name="odom_frame" default="camera_init" />
+  <arg name="map_frame" default="map" />
+  <arg name="odom_frame" default="odom" />
+  <arg name="camera_init_frame" default="camera_init" />
 
   <node pkg="ground_air_mapping"
         type="map_recorder_node"
@@ -22,6 +23,12 @@
     <param name="max_voxels" value="$(arg max_voxels)" />
     <param name="min_points" value="$(arg min_points)" />
   </node>
+
+  <!-- Mapping starts with coincident PX4 odom and FAST-LIO camera_init origins. -->
+  <node pkg="tf2_ros"
+        type="static_transform_publisher"
+        name="odom_camera_init_broadcaster"
+        args="0 0 0 0 0 0 $(arg odom_frame) $(arg camera_init_frame)" />
 
   <node pkg="ground_air_localization"
         type="world_tf_owner_node.py"

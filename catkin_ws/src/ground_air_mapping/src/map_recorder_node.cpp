@@ -147,7 +147,7 @@ bool writeMetadata(const std::string& path, const std::string& map_id,
     }
     out << "{\n"
         << "  \"map_id\": \"" << map_id << "\",\n"
-        << "  \"frame_id\": \"world\",\n"
+        << "  \"frame_id\": \"map\",\n"
         << "  \"point_cloud\": \"cloud_map.pcd\",\n"
         << "  \"occupancy_map\": \"map.yaml\",\n"
         << "  \"voxel_size\": " << voxel_size << ",\n"

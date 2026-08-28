@@ -2,11 +2,13 @@
 """Pure validation helpers for the required ground-air TF topology."""
 
 TARGET_EDGES = (
-    ("world", "camera_init"),
+    ("map", "odom"),
+    ("odom", "camera_init"),
     ("camera_init", "body"),
     ("body", "base_link"),
-    ("base_link", "livox_frame"),
 )
+
+FORBIDDEN_FRAMES = ("world", "livox_frame")
 
 
 def normalize_frame(frame):
@@ -34,7 +36,10 @@ def validate_tf_tree(parents):
         if parent not in normalized.get(child, set()):
             errors.append("missing target edge {} -> {}".format(parent, child))
 
-    if "odom" in normalized or any("odom" in values for values in normalized.values()):
-        errors.append("legacy odom frame is present")
+    present_frames = set(normalized)
+    for parent_set in normalized.values():
+        present_frames.update(parent_set)
+    for frame in FORBIDDEN_FRAMES:
+        if frame in present_frames:
+            errors.append("forbidden frame {} is present".format(frame))
     return errors
-

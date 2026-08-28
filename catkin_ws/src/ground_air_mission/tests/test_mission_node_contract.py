@@ -18,7 +18,7 @@ class MissionNodeContractTests(unittest.TestCase):
 
     def test_default_goal_frame_matches_navigation_stack(self):
         text = NODE.read_text(encoding="utf-8")
-        self.assertIn('"~default_goal_frame", "world"', text)
+        self.assertIn('"~default_goal_frame", "map"', text)
 
     def test_status_and_vehicle_safety_topics_are_part_of_contract(self):
         text = NODE.read_text(encoding="utf-8")

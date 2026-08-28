@@ -49,7 +49,7 @@ lukong_fusion_client:
   manual_trigger_topic: "/lukong_fusion/send_now"
 
   # 当前 fusion_server 的 /start_fusion_node 会重启融合节点。
-  # 路空侧需要等 spiritwing_web 收到 slam_start 后延迟发送关键帧，
+  # 路空侧开始建图后延迟发送关键帧，
   # 避免关键帧早于融合节点重启完成而被清空。
   send_policy: "slam_command"
   slam_command_topic: "/spiritwing/command_json_placeholder"

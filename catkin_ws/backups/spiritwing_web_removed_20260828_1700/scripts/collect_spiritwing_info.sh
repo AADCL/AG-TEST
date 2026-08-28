@@ -220,11 +220,10 @@ if command -v rosrun >/dev/null 2>&1; then
   fi
 fi
 
-run_timeout 10 "tf_echo_world_base_link" rosrun tf tf_echo world base_link
 run_timeout 10 "tf_echo_map_base_link" rosrun tf tf_echo map base_link
 run_timeout 10 "tf_echo_odom_base_link" rosrun tf tf_echo odom base_link
-run_timeout 10 "tf_echo_world_lidar" rosrun tf tf_echo world lidar_link
-run_timeout 10 "tf_echo_base_lidar" rosrun tf tf_echo base_link lidar_link
+run_timeout 10 "tf_echo_odom_camera_init" rosrun tf tf_echo odom camera_init
+run_timeout 10 "tf_echo_camera_init_body" rosrun tf tf_echo camera_init body
 
 run_timeout 10 "possible_map_files_home" bash -lc "find \$HOME -maxdepth 5 -type f \\( -name '*.pgm' -o -name '*.yaml' -o -name '*.pcd' -o -name 'pose.txt' -o -name 'point_record.txt' \\) 2>/dev/null | sort | head -n 300"
 run_timeout 10 "possible_map_files_tmp" bash -lc "find /tmp -maxdepth 4 -type f \\( -name '*.pgm' -o -name '*.yaml' -o -name '*.pcd' -o -name 'pose.txt' -o -name 'point_record.txt' \\) 2>/dev/null | sort | head -n 300"

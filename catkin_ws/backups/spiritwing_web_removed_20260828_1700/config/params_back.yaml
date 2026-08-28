@@ -13,13 +13,13 @@ spiritwing_node:
   #   json_placeholder: 将指控动作封装成 JSON 字符串发布到 command_text_topic，供现场桥接/抓包验证。
   #   mavros:          使用 MAVROS 标准 service/topic 做兜底控制，仅用于现场明确允许时。
   #   cmd_vel:         发布 /cmd_vel，配合 cmd_vel_to_actuator_control.py 转 /mavros/actuator_control。
-  command_backend: "ground_air_services"
+  command_backend: "cmd_vel"
 
   # navigation_backend:
   #   patrol_points:      发布 nav_msgs/Path 到 /spiritwing/patrol_points。
   #   move_base_simple:   发布第一个目标点到 /move_base_simple/goal。
   #   both:               两者同时发布，用于现场对比真实导航链路。
-  navigation_backend: "ground_air_mission"
+  navigation_backend: "move_base_simple"
 
   topics:
     mavros_state: "/mavros/state"
@@ -38,30 +38,18 @@ spiritwing_node:
     pointcloud: "/cloud_registered"
     # 19700101_081820 真机采集：/map 为 nav_msgs/OccupancyGrid，由 /dynamic_mapping 发布。
     map: "/map"
-    cmd_vel: "/navigation/cmd_vel"
+    cmd_vel: "/cmd_vel"
 
   services:
     mavros_arming: "/mavros/cmd/arming"
     mavros_set_mode: "/mavros/set_mode"
     mavros_takeoff: "/mavros/cmd/takeoff"
     mavros_land: "/mavros/cmd/land"
-    ground_air_load_map: "/ground_air/load_map"
-    ground_air_relocalize: "/ground_air/relocalize"
-    ground_air_mapping_start: "/ground_air/mapping/start"
-    ground_air_mapping_save: "/ground_air/mapping/save"
-    ground_air_mission_submit: "/ground_air/mission/submit"
-    ground_air_mission_start: "/ground_air/mission/start"
-    ground_air_mission_pause: "/ground_air/mission/pause"
-    ground_air_mission_resume: "/ground_air/mission/resume"
-    ground_air_mission_cancel: "/ground_air/mission/cancel"
-    ground_air_takeoff: "/ground_air/takeoff"
-    ground_air_land: "/ground_air/land"
-    ground_air_estop: "/ground_air/emergency_stop"
 
   frames:
-    task_frame_id: "world"
-    move_base_goal_frame_id: "world"
-    initialpose_frame_id: "world"
+    task_frame_id: "map"
+    move_base_goal_frame_id: "map"
+    initialpose_frame_id: "map"
 
   control:
     default_takeoff_altitude: 1.0
@@ -74,11 +62,6 @@ spiritwing_node:
     republish_manual_hz: 30.0
     set_mode_before_mavros_control: false
     mavros_control_mode: "OFFBOARD"
-    # 实时点云上传使用真实 PointCloud2 topic。建图中会暂停上传，避免建图页面叠加实时点云。
-    enable_realtime_cloud: true
-    realtime_cloud_period_s: 10.0
-    realtime_cloud_stale_timeout_s: 3.0
-    realtime_cloud_max_points: 15000
 
   maps:
     # 未配置 pgm/yaml 时，slam_stop_down 会把 /map 自动保存到该目录后上传。

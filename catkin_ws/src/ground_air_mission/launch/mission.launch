@@ -1,6 +1,6 @@
 <launch>
   <arg name="dwell_seconds" default="2.0" />
-  <arg name="goal_frame" default="world" />
+  <arg name="goal_frame" default="map" />
   <arg name="move_base_action" default="/move_base" />
 
   <node pkg="ground_air_mission"

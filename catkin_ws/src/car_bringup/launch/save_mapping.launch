@@ -1,0 +1,13 @@
+<launch>
+  <arg name="service_wait_timeout" default="15.0" />
+
+  <!-- Run while start_mapping.launch is still active in another terminal. -->
+  <node pkg="car_bringup"
+        type="ground_air_operation_node.py"
+        name="ground_air_save_mapping"
+        output="screen">
+    <param name="operation" value="save_mapping" />
+    <param name="service_wait_timeout" value="$(arg service_wait_timeout)" />
+    <param name="keep_alive" value="false" />
+  </node>
+</launch>

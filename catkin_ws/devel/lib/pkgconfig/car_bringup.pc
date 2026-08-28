@@ -1,0 +1,8 @@
+prefix=/home/bitcq/catkin_ws/devel
+
+Name: car_bringup
+Description: Description of car_bringup
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

@@ -1,0 +1,7 @@
+set(ground_air_localization_SETUP_PY_SETUP_MODULE "distutils.core")
+set(ground_air_localization_SETUP_PY_VERSION "0.1.0")
+set(ground_air_localization_SETUP_PY_SCRIPTS "")
+set(ground_air_localization_SETUP_PY_PACKAGES "ground_air_localization")
+set(ground_air_localization_SETUP_PY_PACKAGE_DIRS "src/ground_air_localization")
+set(ground_air_localization_SETUP_PY_MODULES "")
+set(ground_air_localization_SETUP_PY_MODULE_DIRS "")

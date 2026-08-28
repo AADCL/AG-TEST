@@ -1,0 +1,10 @@
+digraph G {
+"base_link" -> "livox_frame"[label="Broadcaster: /static_transform_publisher_1787715564714097084\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1787715575.572 sec old)\nBuffer length: 0.000 sec\n"];
+"body" -> "base_link"[label="Broadcaster: /static_transform_publisher_1787715564769767644\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1787715575.572 sec old)\nBuffer length: 0.000 sec\n"];
+"camera_init" -> "body"[label="Broadcaster: /static_transform_publisher_1787715564741241948\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1787715575.572 sec old)\nBuffer length: 0.000 sec\n"];
+"world" -> "camera_init"[label="Broadcaster: /static_transform_publisher_1787715564769768060\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1787715575.572 sec old)\nBuffer length: 0.000 sec\n"];
+edge [style=invis];
+ subgraph cluster_legend { style=bold; color=black; label ="view_frames Result";
+"Recorded at time: 1787715575.572"[ shape=plaintext ] ;
+ }->"world";
+}

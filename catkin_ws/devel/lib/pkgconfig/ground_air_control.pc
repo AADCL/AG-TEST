@@ -1,0 +1,8 @@
+prefix=/home/bitcq/catkin_ws/devel
+
+Name: ground_air_control
+Description: Description of ground_air_control
+Version: 0.1.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: geometry_msgs ground_air_msgs mavros_msgs rospy std_srvs

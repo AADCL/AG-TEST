@@ -1,6 +1,6 @@
 TebLocalPlannerROS:
 
-  odom_topic: Odometry_loc
+  odom_topic: Odometry
 
   # Trajectory
 
@@ -34,7 +34,7 @@ TebLocalPlannerROS:
   #   line_start: [-0.3, 0.0] # for type "line"
   #   line_end: [0.3, 0.0] # for type "line"
     # vertices: [ [0.4655, 0.35], [0.465, -0.35], [-0.465, -0.35], [-0.465, 0.35] ] # for type "polygon"
-    vertices: [[0.3, 0.3], [0.3, -0.3], [-0.3, -0.3], [-0.3, 0.3]] 
+    vertices: [[0.30, 0.30], [0.30, -0.30], [-0.30, -0.30], [-0.30, 0.30]]
   # GoalTolerance
 
   xy_goal_tolerance: 0.25

@@ -16,6 +16,15 @@ def load_yaml(relative_path):
 
 
 class NavigationSafetyConfigTests(unittest.TestCase):
+    CONFIGURED_HALF_LENGTH = 0.30
+    CONFIGURED_HALF_WIDTH = 0.30
+
+    @staticmethod
+    def footprint_extents(points):
+        xs = [float(point[0]) for point in points]
+        ys = [float(point[1]) for point in points]
+        return max(map(abs, xs)), max(map(abs, ys))
+
     def test_launch_loads_global_planner_configuration(self):
         launch = (ROOT / "launch" / "bz_navigation.launch").read_text(encoding="utf-8")
         self.assertIn("cfg/diff_drive/global_planner_params.yaml", launch)
@@ -53,7 +62,31 @@ class NavigationSafetyConfigTests(unittest.TestCase):
             sensor = config["obstacle_layer"]["laser_scan_sensor"]
             self.assertGreaterEqual(float(sensor["min_obstacle_height"]), 0.0)
             self.assertLessEqual(float(sensor["min_obstacle_height"]), 0.15)
-            self.assertEqual(sensor["topic"], "/cloud_registered_body_1")
+            self.assertEqual(sensor["topic"], "/cloud_registered_body")
+
+    def test_costmaps_use_configured_square_vehicle_footprint(self):
+        for relative_path in (
+            "cfg/diff_drive/costmap_common_params_global.yaml",
+            "cfg/diff_drive/costmap_common_params_local.yaml",
+            "cfg/diff_drive/costmap_common_params.yaml",
+        ):
+            config = load_yaml(relative_path)
+            half_length, half_width = self.footprint_extents(config["footprint"])
+            self.assertAlmostEqual(half_length, self.CONFIGURED_HALF_LENGTH)
+            self.assertAlmostEqual(half_width, self.CONFIGURED_HALF_WIDTH)
+
+    def test_teb_uses_the_same_complete_vehicle_footprint(self):
+        teb = load_yaml("cfg/diff_drive/teb_local_planner_params.yaml")["TebLocalPlannerROS"]
+        footprint = teb["footprint_model"]
+        self.assertEqual(footprint["type"], "polygon")
+        half_length, half_width = self.footprint_extents(footprint["vertices"])
+        self.assertAlmostEqual(half_length, self.CONFIGURED_HALF_LENGTH)
+        self.assertAlmostEqual(half_width, self.CONFIGURED_HALF_WIDTH)
+
+    def test_local_costmap_rate_does_not_exceed_controller_rate(self):
+        local = load_yaml("cfg/diff_drive/local_costmap_params.yaml")["local_costmap"]
+        self.assertLessEqual(float(local["update_frequency"]), 5.0)
+        self.assertLessEqual(float(local["publish_frequency"]), 5.0)
 
 
 if __name__ == "__main__":

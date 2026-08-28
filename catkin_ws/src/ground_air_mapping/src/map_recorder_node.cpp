@@ -167,7 +167,7 @@ class MapRecorderNode {
 public:
     MapRecorderNode() : nh_(), pnh_("~") {
         pnh_.param<std::string>("maps_root", maps_root_, "/home/bitcq/catkin_ws/maps");
-        pnh_.param<std::string>("scan_topic", scan_topic_, "/cloud_registered_1");
+        pnh_.param<std::string>("scan_topic", scan_topic_, "/cloud_registered");
         pnh_.param<std::string>("map_topic", map_topic_, "/map");
         pnh_.param<std::string>("expected_scan_frame", expected_scan_frame_, "camera_init");
         pnh_.param("voxel_size", voxel_size_, 0.10);

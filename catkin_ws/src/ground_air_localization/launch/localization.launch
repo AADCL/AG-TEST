@@ -3,8 +3,8 @@
   <arg name="map_frame" default="world" />
   <arg name="odom_frame" default="camera_init" />
   <arg name="base_frame" default="base_link" />
-  <arg name="scan_topic" default="/cloud_registered_1" />
-  <arg name="odom_topic" default="/Odometry_loc" />
+  <arg name="scan_topic" default="/cloud_registered" />
+  <arg name="odom_topic" default="/Odometry" />
   <arg name="relocalize_timeout" default="60.0" />
   <arg name="submap_duration" default="3.0" />
   <arg name="min_submap_frames" default="5" />

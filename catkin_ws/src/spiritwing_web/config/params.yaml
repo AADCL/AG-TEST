@@ -25,8 +25,8 @@ spiritwing_node:
     mavros_state: "/mavros/state"
     mavros_extended: "/mavros/extended_state"
     mavros_battery: "/mavros/battery"
-    # 19700101_081820 真机采集：/Odometry 不存在，/Odometry_loc 和 /mavros/local_position/odom 存在。
-    odom: "/Odometry_loc"
+    # FAST-LIO 已恢复原始接口 /Odometry；飞控里程计仍可由 /mavros/local_position/odom 兜底。
+    odom: "/Odometry"
     fallback_odom: "/mavros/local_position/odom"
     initialpose: "/initialpose"
     patrol_points: "/spiritwing/patrol_points"
@@ -35,7 +35,7 @@ spiritwing_node:
     patrol_state_text: "/spiritwing/patrol_state_text_placeholder"
     command_text: "/spiritwing/command_json_placeholder"
     # /livox/lidar 是 livox_ros_driver2/CustomMsg，Web 节点需要 sensor_msgs/PointCloud2。
-    pointcloud: "/cloud_registered_1"
+    pointcloud: "/cloud_registered"
     # 19700101_081820 真机采集：/map 为 nav_msgs/OccupancyGrid，由 /dynamic_mapping 发布。
     map: "/map"
     cmd_vel: "/navigation/cmd_vel"

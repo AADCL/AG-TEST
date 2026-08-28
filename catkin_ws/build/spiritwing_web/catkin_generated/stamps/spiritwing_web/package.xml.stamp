@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>spiritwing_web</name>
+  <version>0.1.0</version>
+  <description>
+    ROS1 WebSocket bridge for the SpiritWing/Lukong UAV command platform integration.
+  </description>
+
+  <maintainer email="dev@example.com">dev</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>actionlib_msgs</depend>
+  <depend>roscpp</depend>
+  <depend>rospy</depend>
+  <depend>roslib</depend>
+  <depend>std_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>ground_air_msgs</depend>
+  <depend>mavros_msgs</depend>
+  <depend>tf2</depend>
+  <depend>tf2_geometry_msgs</depend>
+  <depend>std_srvs</depend>
+
+  <!-- Plain CMake dependencies: libhv, yaml-cpp, nlohmann_json3, OpenSSL. -->
+</package>

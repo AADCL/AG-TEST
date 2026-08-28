@@ -6,7 +6,7 @@
     <node pkg="tf2_ros" type="static_transform_publisher" name="lidar_base_link_broadcaster" args="0 0 0 0 0 0 base_link livox_frame"/>
     <node pkg="tf2_ros" type="static_transform_publisher" name="base_link_body_broadcaster" args="0 0 0 0 0 0 body base_link"/>
     <node pkg="pcl_test" type="ground_filter_node" name="ground_filter_node" output="screen">
-        <param name="input_topic" value="cloud_registered_body_1" />
+        <param name="input_topic" value="cloud_registered_body" />
         <param name="ground_topic" value="filtered_points_ground" />
         <param name="no_ground_topic" value="filtered_points_no_ground"/>
     </node>

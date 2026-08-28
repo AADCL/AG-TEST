@@ -1,0 +1,8 @@
+prefix=/home/bitcq/catkin_ws/devel
+
+Name: spiritwing_web
+Description: Description of spiritwing_web
+Version: 0.1.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: actionlib_msgs roscpp roslib std_msgs sensor_msgs nav_msgs geometry_msgs ground_air_msgs mavros_msgs tf2 tf2_geometry_msgs std_srvs

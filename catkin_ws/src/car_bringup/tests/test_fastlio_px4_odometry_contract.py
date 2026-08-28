@@ -17,7 +17,7 @@ class FastlioPx4OdometryContractTests(unittest.TestCase):
         self.assertIn('type="fastlio_odometry_adapter.py"', text)
         self.assertIn('name="fastlio_odometry_to_px4"', text)
         self.assertIn('if="$(arg start_fastlio_odometry_to_px4)"', text)
-        self.assertIn('name="input_topic" value="/Odometry_loc"', text)
+        self.assertIn('name="input_topic" value="/Odometry"', text)
         self.assertIn('name="output_topic" value="/mavros/odometry/out"', text)
         self.assertIn('name="expected_frame_id" value="camera_init"', text)
         self.assertIn('name="expected_child_frame_id" value="body"', text)

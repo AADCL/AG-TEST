@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>ground_air_mapping</name>
+  <version>0.1.0</version>
+  <description>Safe map-session recorder for ground-air vehicle relocalization bundles.</description>
+  <maintainer email="bitcq@example.com">bitcq</maintainer>
+  <license>BSD-3-Clause</license>
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>ground_air_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>roscpp</depend>
+  <depend>sensor_msgs</depend>
+  <depend>std_srvs</depend>
+  <exec_depend>ground_air_localization</exec_depend>
+  <test_depend>rostest</test_depend>
+</package>

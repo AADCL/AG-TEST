@@ -1,0 +1,8 @@
+prefix=/home/bitcq/catkin_ws/install
+
+Name: dynamic_mapping
+Description: Description of dynamic_mapping
+Version: 0.0.0
+Cflags: -I${prefix}/include
+Libs: -L${prefix}/lib 
+Requires: nav_msgs roscpp rospy sensor_msgs std_msgs tf map_msgs

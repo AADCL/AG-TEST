@@ -24,7 +24,7 @@ class MappingPackageContractTests(unittest.TestCase):
             '"/ground_air/mapping/save"',
             '"/ground_air/mapping/cancel"',
             '"/ground_air/mapping/status"',
-            '"/cloud_registered_1"',
+            '"/cloud_registered"',
             '"/map"',
         ):
             self.assertIn(token, source)

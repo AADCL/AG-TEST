@@ -13,12 +13,12 @@ lukong_fusion_client:
   frame_id: "map"
 
   # 路空真机已确认的 ROS1 主链路。
-  odom_topic: "/Odometry_loc"
+  odom_topic: "/Odometry"
   fallback_odom_topic: "/mavros/local_position/odom"
   # 融合服务端的 KeyFrame 消息注释要求 pointcloud 是 body frame (undistorted)。
-  # 路空 Web 模块地图上传/实时显示用 /cloud_registered_1；融合客户端优先用 body 点云，
+  # 路空 Web 模块地图上传/实时显示用 /cloud_registered；融合客户端优先用 body 点云，
   # 避免服务端再按 pose 变换时对世界系点云做二次变换。
-  pointcloud_topic: "/cloud_registered_body_1"
+  pointcloud_topic: "/cloud_registered_body"
 
   # 临时 PCD 保存目录。启动时默认清理旧 PCD，避免磁盘长期堆积。
   pcd_dir: "/tmp/lukong_fusion_client/pcd"

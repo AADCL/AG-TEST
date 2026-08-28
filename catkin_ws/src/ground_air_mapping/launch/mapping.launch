@@ -1,6 +1,6 @@
 <launch>
   <arg name="maps_root" default="/home/bitcq/catkin_ws/maps" />
-  <arg name="scan_topic" default="/cloud_registered_1" />
+  <arg name="scan_topic" default="/cloud_registered" />
   <arg name="map_topic" default="/map" />
   <arg name="expected_scan_frame" default="camera_init" />
   <arg name="voxel_size" default="0.10" />

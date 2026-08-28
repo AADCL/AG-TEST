@@ -1,0 +1,2 @@
+car_bringup:dynamic_mapping:fast_lio_open3d:ground_air_control:ground_air_localization:ground_air_mapping:ground_air_mission:ground_air_msgs:lidar_ground_filter:livox_ros_driver2:lukong_fusion_client:spiritwing_web:teb_local_planner_tutorials:vision_to_mavros
+-DCATKIN_DEVEL_PREFIX=/home/bitcq/catkin_ws/devel -DCMAKE_INSTALL_PREFIX=/home/bitcq/catkin_ws/install -G Unix Makefiles

@@ -48,9 +48,9 @@ spiritwing_info_19700101_081820
 - `/move_base` 发布 `/cmd_vel`，现场脚本 `cmd_mavros.py` 订阅 `/cmd_vel` 并发布 `/mavros/actuator_control`。
 - `/mavros/actuator_control` 类型为 `mavros_msgs/ActuatorControl`，订阅者为 `/mavros`。
 - `/Odometry`、`/spiritwing/odom`、`/spiritwing/oodm` 不存在。
-- 可用里程计为 `/Odometry_loc` 和 `/mavros/local_position/odom`，其中 `/mavros/local_position/odom` 已采到 `nav_msgs/Odometry` 样例。
+- 可用里程计为 `/Odometry` 和 `/mavros/local_position/odom`，其中 `/mavros/local_position/odom` 已采到 `nav_msgs/Odometry` 样例。
 - `/livox/lidar` 是 `livox_ros_driver2/CustomMsg`，不能直接给当前 `sensor_msgs/PointCloud2` 点云上传逻辑使用。
-- 可用 PointCloud2 topic 包括 `/Laser_map_1`、`/cloud_registered_1`、`/cloud_registered_body_1`。
+- 可用 PointCloud2 topic 包括 `/Laser_map`、`/cloud_registered`、`/cloud_registered_body`。
 - `/map` 存在，类型 `nav_msgs/OccupancyGrid`，由 `/dynamic_mapping` 发布，`/move_base` 订阅。
 - 现场主要工作空间是 `$HOME/HZBZ` 和 `$HOME/ifc_plus`，不是此前资料里的 `$HOME/spritwing_v1.0`。
 
@@ -60,9 +60,9 @@ spiritwing_info_19700101_081820
 spiritwing_node:
   navigation_backend: "move_base_simple"
   topics:
-    odom: "/Odometry_loc"
+    odom: "/Odometry"
     fallback_odom: "/mavros/local_position/odom"
-    pointcloud: "/cloud_registered_1"
+    pointcloud: "/cloud_registered"
 ```
 
 ## 已创建代码

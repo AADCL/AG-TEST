@@ -81,8 +81,8 @@ spiritwing_node:
 
 本次采集还确认：
 
-- `/Odometry` 不存在，默认位姿已改为 `/Odometry_loc`，兜底为 `/mavros/local_position/odom`。
-- `/livox/lidar` 是 `livox_ros_driver2/CustomMsg`，默认点云上传 topic 已改为 `/cloud_registered_1`。
+- 默认位姿使用 FAST-LIO 原始接口 `/Odometry`，兜底为 `/mavros/local_position/odom`。
+- `/livox/lidar` 是 `livox_ros_driver2/CustomMsg`，默认点云上传 topic 使用 `/cloud_registered`。
 - `/map` 是 `nav_msgs/OccupancyGrid`，由 `/dynamic_mapping` 发布并被 `/move_base` 使用。
 
 ## 真机信息采集脚本
@@ -107,8 +107,8 @@ bash "$(rospack find spiritwing_web)/scripts/collect_spiritwing_info.sh" /tmp/sp
 - `swing_msgs/UAVCommand`、`swing_msgs/PatrolState` 等消息定义。
 - `/spiritwing/command`、`/spiritwing/patrol_points`、`/spiritwing/patrol_state`。
 - `/spiritwing/state`、`/spiritwing/control_state`、`/spiritwing/sensor_state`、`/spiritwing/ui_state` 等状态 topic。
-- `/Odometry`、`/Odometry_loc`、`/spiritwing/oodm`、`/spiritwing/odom`、`/mavros/local_position/odom`。
-- `/livox/lidar`、`/livox/cloud_in_world`、`/Laser_map_1`、`/cloud_registered_1`、`/cloud_registered_body_1` 等点云/地图 topic。
+- `/Odometry`、`/spiritwing/oodm`、`/spiritwing/odom`、`/mavros/local_position/odom`。
+- `/livox/lidar`、`/livox/cloud_in_world`、`/Laser_map`、`/cloud_registered`、`/cloud_registered_body` 等点云/地图 topic。
 - MAVROS 状态、电池、本地位姿/速度、GPS、RC、IMU、service、参数、TF。
 - `step0_sensor.sh`、`step1_getMap.sh`、`step2_mission.sh`、`start*.sh`、`cmd_mavros.py` 等启动/控制脚本路径和内容。
 - 全部 ROS topic/service 类型表，便于发现资料未写的接口。

@@ -96,7 +96,7 @@ Visualization Manager:
           Size (Pixels): 3
           Size (m): 0.05000000074505806
           Style: Points
-          Topic: /cloud_registered_1
+          Topic: /cloud_registered
           Unreliable: false
           Use Fixed Frame: true
           Use rainbow: true
@@ -124,7 +124,7 @@ Visualization Manager:
           Size (Pixels): 1
           Size (m): 0.009999999776482582
           Style: Points
-          Topic: /cloud_registered_body_1
+          Topic: /cloud_registered_body
           Unreliable: false
           Use Fixed Frame: true
           Use rainbow: true
@@ -192,7 +192,7 @@ Visualization Manager:
             Shaft Length: 0.05000000074505806
             Shaft Radius: 0.05000000074505806
             Value: Axes
-          Topic: /Odometry_loc
+          Topic: /Odometry
           Unreliable: false
           Value: true
       Enabled: true

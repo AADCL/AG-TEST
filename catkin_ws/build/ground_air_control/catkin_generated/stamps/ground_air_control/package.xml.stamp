@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>ground_air_control</name>
+  <version>0.1.0</version>
+  <description>Safety state machine and exclusive motion routing for a ground-air vehicle.</description>
+  <maintainer email="bitcq@example.com">bitcq</maintainer>
+  <license>BSD-3-Clause</license>
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>geometry_msgs</depend>
+  <depend>ground_air_msgs</depend>
+  <depend>mavros_msgs</depend>
+  <depend>rospy</depend>
+  <depend>std_srvs</depend>
+</package>

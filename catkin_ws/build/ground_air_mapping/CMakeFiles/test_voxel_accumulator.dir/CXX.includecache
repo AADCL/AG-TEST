@@ -1,0 +1,32 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/bitcq/catkin_ws/src/ground_air_mapping/include/ground_air_mapping/voxel_accumulator.hpp
+algorithm
+-
+cmath
+-
+cstddef
+-
+cstdint
+-
+stdexcept
+-
+unordered_map
+-
+vector
+-
+
+/home/bitcq/catkin_ws/src/ground_air_mapping/tests/test_voxel_accumulator.cpp
+cassert
+-
+cmath
+-
+ground_air_mapping/voxel_accumulator.hpp
+/home/bitcq/catkin_ws/src/ground_air_mapping/tests/ground_air_mapping/voxel_accumulator.hpp
+

@@ -8,19 +8,19 @@
 
 根据 `bingzhi-wurenji/spiritwing_web` 的现场调试记录，路空无人机当前真机默认使用：
 
-- 位姿：`/Odometry_loc`，类型 `nav_msgs/Odometry`。
+- 位姿：`/Odometry`，类型 `nav_msgs/Odometry`。
 - 位姿兜底：`/mavros/local_position/odom`，类型 `nav_msgs/Odometry`。
-- 点云：默认使用 `/cloud_registered_body_1`，类型 `sensor_msgs/PointCloud2`。
+- 点云：默认使用 `/cloud_registered_body`，类型 `sensor_msgs/PointCloud2`。
 - 点云 PCD 字段：`x y z intensity`。如果 ROS 点云没有 `intensity` 字段，客户端会补 `0.0`。
 
-注意：`/cloud_registered_1` 已用于路空 Web 模块的实时点云和地图上传，它更像注册后的世界系点云。融合服务端的 `KeyFrame.msg` 注释要求点云是 `body frame (undistorted)`，并会在服务端按关键帧 pose 变换到世界系，因此融合客户端默认优先用 `/cloud_registered_body_1`。
+注意：`/cloud_registered` 已用于路空 Web 模块的实时点云和地图上传，它更像注册后的世界系点云。融合服务端的 `KeyFrame.msg` 注释要求点云是 `body frame (undistorted)`，并会在服务端按关键帧 pose 变换到世界系，因此融合客户端默认优先用 `/cloud_registered_body`。
 
 ## 数据流
 
 ```text
 路空 ROS1
-  /Odometry_loc
-  /cloud_registered_body_1
+  /Odometry
+  /cloud_registered_body
       |
       v
 lukong_fusion_client_node.py
@@ -85,9 +85,9 @@ lukong_fusion_client:
   robot_id: "SPIRITWING_LUKONG_SN"
   area_id: "123"
 
-  odom_topic: "/Odometry_loc"
+  odom_topic: "/Odometry"
   fallback_odom_topic: "/mavros/local_position/odom"
-pointcloud_topic: "/cloud_registered_body_1"
+pointcloud_topic: "/cloud_registered_body"
 ```
 
 `robot_ip` 必须是融合服务器能访问到的无人机 IP，因为服务器会通过：
@@ -204,10 +204,10 @@ POST /keyframe_data
 在路空无人机上先确认：
 
 ```bash
-rostopic type /Odometry_loc
-rostopic type /cloud_registered_1
-rostopic echo -n 1 /Odometry_loc
-rostopic echo -n 1 /cloud_registered_1
+rostopic type /Odometry
+rostopic type /cloud_registered
+rostopic echo -n 1 /Odometry
+rostopic echo -n 1 /cloud_registered
 ```
 
 在融合服务器上确认 HTTP 服务：

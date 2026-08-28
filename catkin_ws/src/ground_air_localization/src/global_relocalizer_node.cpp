@@ -30,8 +30,8 @@ namespace registration = open3d::pipelines::registration;
 class GlobalRelocalizer {
 public:
     GlobalRelocalizer() : nh_(), pnh_("~") {
-        pnh_.param<std::string>("scan_topic", scan_topic_, "/cloud_registered_1");
-        pnh_.param<std::string>("odom_topic", odom_topic_, "/Odometry_loc");
+        pnh_.param<std::string>("scan_topic", scan_topic_, "/cloud_registered");
+        pnh_.param<std::string>("odom_topic", odom_topic_, "/Odometry");
         pnh_.param<std::string>("map_frame", map_frame_, "world");
         pnh_.param<std::string>("odom_frame", odom_frame_, "camera_init");
         pnh_.param<std::string>("base_frame", base_frame_, "base_link");

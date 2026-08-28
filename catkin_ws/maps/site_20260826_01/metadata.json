@@ -1,0 +1,9 @@
+{
+  "map_id": "site_20260826_01",
+  "frame_id": "world",
+  "point_cloud": "cloud_map.pcd",
+  "occupancy_map": "map.yaml",
+  "voxel_size": 0.1,
+  "point_count": 73300,
+  "map_area": 91.04
+}

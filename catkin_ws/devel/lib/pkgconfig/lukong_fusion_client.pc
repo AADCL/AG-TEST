@@ -1,0 +1,8 @@
+prefix=/home/bitcq/catkin_ws/devel
+
+Name: lukong_fusion_client
+Description: Description of lukong_fusion_client
+Version: 0.1.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

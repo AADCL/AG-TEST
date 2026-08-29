@@ -71,6 +71,19 @@ class FullLaunchContractTests(unittest.TestCase):
         self.assertIn('name="start_control" default="false"', text)
         self.assertIn('name="start_mission" default="false"', text)
 
+    def test_ccs_task_adapter_is_opt_in_and_passed_through_autonomy(self):
+        full = (ROOT / "launch" / "ground_air_full.launch").read_text(encoding="utf-8")
+        autonomy = (ROOT / "launch" / "autonomy.launch").read_text(encoding="utf-8")
+        self.assertIn('name="start_ccs_task_adapter" default="false"', full)
+        self.assertIn(
+            'if="$(arg start_ccs_task_adapter)" file="$(find epaguav_ground_air_task_adapter)/launch/task_adapter.launch"',
+            full,
+        )
+        self.assertIn('name="ccs_mission_root" default="/home/bitcq/ccs_edge_ws/mission"', full)
+        self.assertIn('name="start_ccs_task_adapter" default="false"', autonomy)
+        self.assertIn('name="start_ccs_task_adapter" value="$(arg start_ccs_task_adapter)"', autonomy)
+        self.assertIn('name="ccs_mission_root" value="$(arg ccs_mission_root)"', autonomy)
+
 
 if __name__ == "__main__":
     unittest.main()

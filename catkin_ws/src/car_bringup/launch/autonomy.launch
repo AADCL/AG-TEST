@@ -5,6 +5,8 @@
   <arg name="start_navigation" default="false" />
   <arg name="start_control" default="false" />
   <arg name="start_mission" default="false" />
+  <arg name="start_ccs_task_adapter" default="false" />
+  <arg name="ccs_mission_root" default="/home/bitcq/ccs_edge_ws/mission" />
 
   <include file="$(find car_bringup)/launch/ground_air_full.launch">
     <arg name="start_mavros" value="$(arg start_mavros)" />
@@ -13,6 +15,8 @@
     <arg name="start_navigation" value="$(arg start_navigation)" />
     <arg name="start_control" value="$(arg start_control)" />
     <arg name="start_mission" value="$(arg start_mission)" />
+    <arg name="start_ccs_task_adapter" value="$(arg start_ccs_task_adapter)" />
+    <arg name="ccs_mission_root" value="$(arg ccs_mission_root)" />
     <arg name="start_fusion_client" value="false" />
     <arg name="maps_root" value="$(arg maps_root)" />
   </include>

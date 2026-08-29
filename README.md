@@ -1,6 +1,14 @@
 # AG-TEST
 用于空地无人机的开发代码管理
 
+2026-0829
+完成 CCS 指控平台任务接口与空地机器人任务执行器的 ROS 适配。
+新增 epaguav_ground_air_task_adapter，接收任务准备、定时执行、停止、取消和卸载指令，并向平台反馈任务状态、进度和当前位置。
+新增任务 XML 安全校验、任务点航向自动生成、重复请求幂等处理和定时启动保护。
+接入 epgeneral_task_control 的强类型任务消息，并在 car_bringup 中增加默认关闭的 start_ccs_task_adapter 启动开关。
+适配层只调用 ground_air_mission 服务，不接管 UDP、MAVROS、解锁、起飞、降落、急停或空地模态切换。
+完成工作空间编译、适配器测试、原任务执行器回归测试和 launch 展开检查。
+
 2026-0828
 完成了空地无人机地面模态的全流程测试
 更改了启动方式和tf_tree

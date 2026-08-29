@@ -1,0 +1,17 @@
+<launch>
+  <arg name="mission_root" default="/home/bitcq/ccs_edge_ws/mission" />
+  <arg name="service_wait_timeout" default="2.0" />
+  <arg name="pose_timeout" default="2.0" />
+  <arg name="feedback_period" default="1.0" />
+
+  <node pkg="epaguav_ground_air_task_adapter"
+        type="task_adapter_node.py"
+        name="epaguav_ground_air_task_adapter"
+        output="screen"
+        required="false">
+    <param name="mission_root" value="$(arg mission_root)" />
+    <param name="service_wait_timeout" value="$(arg service_wait_timeout)" />
+    <param name="pose_timeout" value="$(arg pose_timeout)" />
+    <param name="feedback_period" value="$(arg feedback_period)" />
+  </node>
+</launch>

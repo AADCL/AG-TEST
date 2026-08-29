@@ -12,6 +12,9 @@
   <arg name="start_navigation" default="true" />
   <arg name="start_control" default="true" />
   <arg name="start_mission" default="true" />
+  <!-- CCS task commands are opt-in; the UDP/device-access process is external. -->
+  <arg name="start_ccs_task_adapter" default="false" />
+  <arg name="ccs_mission_root" default="/home/bitcq/ccs_edge_ws/mission" />
   <arg name="start_vision_to_mavros" default="true" />
   <arg name="start_fusion_client" default="false" />
   <arg name="maps_root" default="/home/bitcq/catkin_ws/maps" />
@@ -55,6 +58,9 @@
   <include if="$(arg start_mission)" file="$(find ground_air_mission)/launch/mission.launch">
     <arg name="dwell_seconds" value="2.0" />
     <arg name="goal_frame" value="map" />
+  </include>
+  <include if="$(arg start_ccs_task_adapter)" file="$(find epaguav_ground_air_task_adapter)/launch/task_adapter.launch">
+    <arg name="mission_root" value="$(arg ccs_mission_root)" />
   </include>
 
   <include if="$(arg start_vision_to_mavros)" file="$(find vision_to_mavros)/launch/localization_to_mavros.launch">

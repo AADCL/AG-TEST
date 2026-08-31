@@ -58,22 +58,27 @@
   <build_export_depend>rospy</build_export_depend>
   <build_export_depend>std_msgs</build_export_depend>
   <exec_depend>nav_msgs</exec_depend>
+  <exec_depend>a8_mini_camera</exec_depend>
   <exec_depend>roscpp</exec_depend>
   <exec_depend>rospy</exec_depend>
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>tf</exec_depend>
   <exec_depend>tf2_msgs</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
   <exec_depend>dynamic_mapping</exec_depend>
+  <exec_depend>epgeneral_device_config</exec_depend>
+  <exec_depend>epgeneral_video_srt</exec_depend>
+  <exec_depend>epaguav_ground_air_task_adapter</exec_depend>
   <exec_depend>fast_lio_open3d</exec_depend>
   <exec_depend>ground_air_control</exec_depend>
   <exec_depend>ground_air_localization</exec_depend>
   <exec_depend>ground_air_mapping</exec_depend>
   <exec_depend>ground_air_mission</exec_depend>
+  <exec_depend>ground_air_msgs</exec_depend>
   <exec_depend>livox_ros_driver2</exec_depend>
   <exec_depend>lukong_fusion_client</exec_depend>
   <exec_depend>mavros</exec_depend>
   <exec_depend>pcl_test</exec_depend>
-  <exec_depend>spiritwing_web</exec_depend>
   <exec_depend>teb_local_planner_tutorials</exec_depend>
   <exec_depend>vision_to_mavros</exec_depend>
 

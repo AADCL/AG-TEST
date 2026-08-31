@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?><testsuite name="nosetests" tests="18" errors="4" failures="0" skip="0"><testcase classname="nose.failure.Failure" name="runTest" time="0.000"><error type="builtins.ModuleNotFoundError" message="No module named 'msgpack'"><![CDATA[Traceback (most recent call last):
+  File "/usr/lib/python3.8/unittest/case.py", line 60, in testPartExecutor
+    yield
+  File "/usr/lib/python3.8/unittest/case.py", line 676, in run
+    self._callTestMethod(testMethod)
+  File "/usr/lib/python3.8/unittest/case.py", line 633, in _callTestMethod
+    method()
+  File "/usr/lib/python3/dist-packages/nose/failure.py", line 39, in runTest
+    raise self.exc_val.with_traceback(self.tb)
+  File "/usr/lib/python3/dist-packages/nose/loader.py", line 416, in loadTestsFromName
+    module = self.importer.importFromPath(
+  File "/usr/lib/python3/dist-packages/nose/importer.py", line 47, in importFromPath
+    return self.importFromDir(dir_path, fqname)
+  File "/usr/lib/python3/dist-packages/nose/importer.py", line 94, in importFromDir
+    mod = load_module(part_fqname, fh, filename, desc)
+  File "/usr/lib/python3.8/imp.py", line 234, in load_module
+    return load_source(name, filename, file)
+  File "/usr/lib/python3.8/imp.py", line 171, in load_source
+    module = _load(spec)
+  File "<frozen importlib._bootstrap>", line 702, in _load
+  File "<frozen importlib._bootstrap>", line 671, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 848, in exec_module
+  File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
+  File "/home/bitcq/catkin_ws/src/EPGeneral_task_control/test/test_core.py", line 8, in <module>
+    import msgpack
+ModuleNotFoundError: No module named 'msgpack'
+]]></error></testcase><testcase classname="nose.failure.Failure" name="runTest" time="0.000"><error type="builtins.ModuleNotFoundError" message="No module named 'ccs_monitor'"><![CDATA[Traceback (most recent call last):
+  File "/usr/lib/python3.8/unittest/case.py", line 60, in testPartExecutor
+    yield
+  File "/usr/lib/python3.8/unittest/case.py", line 676, in run
+    self._callTestMethod(testMethod)
+  File "/usr/lib/python3.8/unittest/case.py", line 633, in _callTestMethod
+    method()
+  File "/usr/lib/python3/dist-packages/nose/failure.py", line 39, in runTest
+    raise self.exc_val.with_traceback(self.tb)
+  File "/usr/lib/python3/dist-packages/nose/loader.py", line 416, in loadTestsFromName
+    module = self.importer.importFromPath(
+  File "/usr/lib/python3/dist-packages/nose/importer.py", line 47, in importFromPath
+    return self.importFromDir(dir_path, fqname)
+  File "/usr/lib/python3/dist-packages/nose/importer.py", line 94, in importFromDir
+    mod = load_module(part_fqname, fh, filename, desc)
+  File "/usr/lib/python3.8/imp.py", line 234, in load_module
+    return load_source(name, filename, file)
+  File "/usr/lib/python3.8/imp.py", line 171, in load_source
+    module = _load(spec)
+  File "<frozen importlib._bootstrap>", line 702, in _load
+  File "<frozen importlib._bootstrap>", line 671, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 848, in exec_module
+  File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
+  File "/home/bitcq/catkin_ws/src/EPGeneral_task_control/test/test_ground_contract.py", line 8, in <module>
+    from ccs_monitor.task_config import load_task_system_config
+ModuleNotFoundError: No module named 'ccs_monitor'
+]]></error></testcase><testcase classname="nose.failure.Failure" name="runTest" time="0.000"><error type="builtins.ModuleNotFoundError" message="No module named 'msgpack'"><![CDATA[Traceback (most recent call last):
+  File "/usr/lib/python3.8/unittest/case.py", line 60, in testPartExecutor
+    yield
+  File "/usr/lib/python3.8/unittest/case.py", line 676, in run
+    self._callTestMethod(testMethod)
+  File "/usr/lib/python3.8/unittest/case.py", line 633, in _callTestMethod
+    method()
+  File "/usr/lib/python3/dist-packages/nose/failure.py", line 39, in runTest
+    raise self.exc_val.with_traceback(self.tb)
+  File "/usr/lib/python3/dist-packages/nose/loader.py", line 416, in loadTestsFromName
+    module = self.importer.importFromPath(
+  File "/usr/lib/python3/dist-packages/nose/importer.py", line 47, in importFromPath
+    return self.importFromDir(dir_path, fqname)
+  File "/usr/lib/python3/dist-packages/nose/importer.py", line 94, in importFromDir
+    mod = load_module(part_fqname, fh, filename, desc)
+  File "/usr/lib/python3.8/imp.py", line 234, in load_module
+    return load_source(name, filename, file)
+  File "/usr/lib/python3.8/imp.py", line 171, in load_source
+    module = _load(spec)
+  File "<frozen importlib._bootstrap>", line 702, in _load
+  File "<frozen importlib._bootstrap>", line 671, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 848, in exec_module
+  File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
+  File "/home/bitcq/catkin_ws/src/EPGeneral_task_control/test/test_node.py", line 9, in <module>
+    import msgpack
+ModuleNotFoundError: No module named 'msgpack'
+]]></error></testcase><testcase classname="test.test_scout_adapter.ScoutAdapterCoreTests" name="test_execution_errors_have_actionable_codes" time="0.000"></testcase><testcase classname="test.test_scout_adapter.ScoutAdapterCoreTests" name="test_execution_finish_and_stop_keep_navigation_process" time="0.000"></testcase><testcase classname="test.test_scout_adapter.ScoutAdapterCoreTests" name="test_localized_map_state_requires_map_from_odom" time="0.002"></testcase><testcase classname="test.test_scout_adapter.ScoutAdapterCoreTests" name="test_move_base_plan_failure_preserves_action_detail" time="0.000"></testcase><testcase classname="test.test_scout_adapter.ScoutAdapterCoreTests" name="test_navigation_map_rejects_unknown_and_outside_waypoints" time="0.005"></testcase><testcase classname="test.test_scout_adapter.ScoutAdapterCoreTests" name="test_navigation_ready_deadline_never_passes_group_start" time="0.000"></testcase><testcase classname="test.test_scout_adapter.ScoutAdapterCoreTests" name="test_not_localized_error_is_reported_as_localization_unavailable" time="0.000"></testcase><testcase classname="test.test_scout_adapter.ScoutAdapterCoreTests" name="test_prepare_starts_navigation_once_and_schedule_reuses_it" time="0.007"></testcase><testcase classname="test.test_scout_adapter.ScoutAdapterCoreTests" name="test_tf_listener_is_created_and_retained" time="0.000"></testcase><testcase classname="test.test_scout_adapter.ScoutAdapterCoreTests" name="test_tf_lookup_error_becomes_localization_error" time="0.000"></testcase><testcase classname="test.test_scout_adapter.ScoutAdapterCoreTests" name="test_trajectory_is_validated_against_execution_identity" time="0.000"></testcase><testcase classname="test.test_scout_adapter.ScoutAdapterCoreTests" name="test_trajectory_store_round_trips_complete_payload" time="0.003"></testcase><testcase classname="test.test_scout_adapter.ScoutAdapterCoreTests" name="test_waypoint_yaw_uses_current_pose_then_previous_point" time="0.000"></testcase><testcase classname="nose.failure.Failure" name="runTest" time="0.000"><error type="builtins.ModuleNotFoundError" message="No module named 'msgpack'"><![CDATA[Traceback (most recent call last):
+  File "/usr/lib/python3.8/unittest/case.py", line 60, in testPartExecutor
+    yield
+  File "/usr/lib/python3.8/unittest/case.py", line 676, in run
+    self._callTestMethod(testMethod)
+  File "/usr/lib/python3.8/unittest/case.py", line 633, in _callTestMethod
+    method()
+  File "/usr/lib/python3/dist-packages/nose/failure.py", line 39, in runTest
+    raise self.exc_val.with_traceback(self.tb)
+  File "/usr/lib/python3/dist-packages/nose/loader.py", line 416, in loadTestsFromName
+    module = self.importer.importFromPath(
+  File "/usr/lib/python3/dist-packages/nose/importer.py", line 47, in importFromPath
+    return self.importFromDir(dir_path, fqname)
+  File "/usr/lib/python3/dist-packages/nose/importer.py", line 94, in importFromDir
+    mod = load_module(part_fqname, fh, filename, desc)
+  File "/usr/lib/python3.8/imp.py", line 234, in load_module
+    return load_source(name, filename, file)
+  File "/usr/lib/python3.8/imp.py", line 171, in load_source
+    module = _load(spec)
+  File "<frozen importlib._bootstrap>", line 702, in _load
+  File "<frozen importlib._bootstrap>", line 671, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 848, in exec_module
+  File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
+  File "/home/bitcq/catkin_ws/src/EPGeneral_task_control/test/test_udp_integration.py", line 6, in <module>
+    import msgpack
+ModuleNotFoundError: No module named 'msgpack'
+]]></error></testcase><testcase classname="test.test_version.VersionTests" name="test_version_and_python36_syntax" time="0.096"></testcase></testsuite>

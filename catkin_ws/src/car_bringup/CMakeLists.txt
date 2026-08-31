@@ -114,6 +114,10 @@ install(DIRECTORY launch
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
+install(DIRECTORY config
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+
 catkin_install_python(PROGRAMS
   scripts/export_tf_tree.py
   scripts/fastlio_odometry_adapter.py

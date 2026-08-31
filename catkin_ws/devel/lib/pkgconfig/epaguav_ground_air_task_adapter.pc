@@ -1,0 +1,8 @@
+prefix=/home/bitcq/catkin_ws/devel
+
+Name: epaguav_ground_air_task_adapter
+Description: Description of epaguav_ground_air_task_adapter
+Version: 0.1.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: epgeneral_task_control geometry_msgs ground_air_msgs rospy std_srvs

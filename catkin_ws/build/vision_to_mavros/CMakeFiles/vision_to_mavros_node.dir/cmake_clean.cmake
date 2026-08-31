@@ -2,7 +2,6 @@ file(REMOVE_RECURSE
   "/home/bitcq/catkin_ws/devel/lib/vision_to_mavros/vision_to_mavros_node"
   "/home/bitcq/catkin_ws/devel/lib/vision_to_mavros/vision_to_mavros_node.pdb"
   "CMakeFiles/vision_to_mavros_node.dir/src/vision_to_mavros.cpp.o"
-  "CMakeFiles/vision_to_mavros_node.dir/src/vision_to_mavros.cpp.o.d"
 )
 
 # Per-language clean rules from dependency scanning.

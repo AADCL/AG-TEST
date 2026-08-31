@@ -1,13 +1,15 @@
 <launch>
   <arg name="map_id" />
   <arg name="start_stack" default="true" />
-  <arg name="start_mavros" default="true" />
+  <arg name="start_mavros" default="false" />
   <arg name="maps_root" default="/home/bitcq/catkin_ws/maps" />
   <arg name="service_wait_timeout" default="90.0" />
 
-  <!-- Passive startup: motion remains under the RC transmitter. -->
-  <include if="$(arg start_stack)" file="$(find car_bringup)/launch/manual_mapping.launch">
-    <arg name="start_mavros" value="$(arg start_mavros)" />
+  <!--
+    基础层必须提前单独启动。start_mavros 仅为兼容旧命令保留，不再在此处生效；
+    本入口可启动建图层并立即调用 /ground_air/mapping/start。
+  -->
+  <include if="$(arg start_stack)" file="$(find car_bringup)/launch/mapping_system.launch">
     <arg name="maps_root" value="$(arg maps_root)" />
   </include>
 

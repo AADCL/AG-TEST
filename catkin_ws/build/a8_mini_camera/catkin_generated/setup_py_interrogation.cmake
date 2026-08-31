@@ -1,0 +1,7 @@
+set(a8_mini_camera_SETUP_PY_SETUP_MODULE "setuptools")
+set(a8_mini_camera_SETUP_PY_VERSION "0.1.0")
+set(a8_mini_camera_SETUP_PY_SCRIPTS "")
+set(a8_mini_camera_SETUP_PY_PACKAGES "a8_mini_camera")
+set(a8_mini_camera_SETUP_PY_PACKAGE_DIRS "src/a8_mini_camera")
+set(a8_mini_camera_SETUP_PY_MODULES "")
+set(a8_mini_camera_SETUP_PY_MODULE_DIRS "")

@@ -1,0 +1,9 @@
+<launch>
+    <!-- 滤地面 -->
+    <include file="$(find pcl_test)/launch/filter_ground.launch" />
+    <!-- 动态全局地图生成 -->
+    <include file="$(find dynamic_mapping)/launch/dynamic_mapping.launch" />
+    <!-- 规划避障 -->
+    <include file="$(find teb_local_planner_tutorials)/launch/bz_navigation.launch" />
+
+</launch>

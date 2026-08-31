@@ -1,6 +1,14 @@
 # AG-TEST
 用于空地无人机的开发代码管理
 
+2026-0831
+完成 A8 Mini 云台相机与 CCS_dev 视频链路的机器人侧集成。
+新增 a8_mini_camera 功能包，通过 RTSP 读取相机主码流并发布 /a8_cam/image_raw。
+集成 EPGeneral_video_srt，将 ROS 图像编码为 H.264，并通过 SRT 监听端口 9000 提供给指控平台。
+更新 base_system.launch，默认启动摄像头和视频推流，同时保留独立关闭参数，视频故障不会终止基础系统。
+设备标识配置为 AGV_001，机器人地址配置为 192.168.50.130；完成约 25 Hz 图像发布和 SRT 调用端解析验证。
+远程主机已在 ~/.bashrc 中自动加载 ROS Noetic 与 /home/bitcq/catkin_ws/devel/setup.bash，新终端无需手动 source。
+
 2026-0829
 完成 CCS 指控平台任务接口与空地机器人任务执行器的 ROS 适配。
 新增 epaguav_ground_air_task_adapter，接收任务准备、定时执行、停止、取消和卸载指令，并向平台反馈任务状态、进度和当前位置。

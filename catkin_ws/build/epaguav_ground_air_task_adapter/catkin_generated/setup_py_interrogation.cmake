@@ -1,0 +1,7 @@
+set(epaguav_ground_air_task_adapter_SETUP_PY_SETUP_MODULE "setuptools")
+set(epaguav_ground_air_task_adapter_SETUP_PY_VERSION "0.1.0")
+set(epaguav_ground_air_task_adapter_SETUP_PY_SCRIPTS "")
+set(epaguav_ground_air_task_adapter_SETUP_PY_PACKAGES "epaguav_ground_air_task_adapter")
+set(epaguav_ground_air_task_adapter_SETUP_PY_PACKAGE_DIRS "src/epaguav_ground_air_task_adapter")
+set(epaguav_ground_air_task_adapter_SETUP_PY_MODULES "")
+set(epaguav_ground_air_task_adapter_SETUP_PY_MODULE_DIRS "")

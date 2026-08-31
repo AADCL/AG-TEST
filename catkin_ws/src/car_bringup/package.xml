@@ -58,12 +58,17 @@
   <build_export_depend>rospy</build_export_depend>
   <build_export_depend>std_msgs</build_export_depend>
   <exec_depend>nav_msgs</exec_depend>
+  <exec_depend>a8_mini_camera</exec_depend>
   <exec_depend>roscpp</exec_depend>
   <exec_depend>rospy</exec_depend>
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>tf</exec_depend>
   <exec_depend>tf2_msgs</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
   <exec_depend>dynamic_mapping</exec_depend>
+  <exec_depend>epgeneral_device_config</exec_depend>
+  <exec_depend>epgeneral_video_srt</exec_depend>
+  <exec_depend>epaguav_ground_air_task_adapter</exec_depend>
   <exec_depend>fast_lio_open3d</exec_depend>
   <exec_depend>ground_air_control</exec_depend>
   <exec_depend>ground_air_localization</exec_depend>

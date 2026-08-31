@@ -1,28 +1,47 @@
-
-# Consider dependencies only in project.
-set(CMAKE_DEPENDS_IN_PROJECT_ONLY OFF)
-
 # The set of languages for which implicit dependencies are needed:
 set(CMAKE_DEPENDS_LANGUAGES
+  "CXX"
+  )
+# The set of files for implicit dependencies of each language:
+set(CMAKE_DEPENDS_CHECK_CXX
+  "/home/bitcq/catkin_ws/src/livox_ros_driver2/src/call_back/lidar_common_callback.cpp" "/home/bitcq/catkin_ws/build/livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/call_back/lidar_common_callback.cpp.o"
+  "/home/bitcq/catkin_ws/src/livox_ros_driver2/src/call_back/livox_lidar_callback.cpp" "/home/bitcq/catkin_ws/build/livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/call_back/livox_lidar_callback.cpp.o"
+  "/home/bitcq/catkin_ws/src/livox_ros_driver2/src/comm/cache_index.cpp" "/home/bitcq/catkin_ws/build/livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/comm/cache_index.cpp.o"
+  "/home/bitcq/catkin_ws/src/livox_ros_driver2/src/comm/comm.cpp" "/home/bitcq/catkin_ws/build/livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/comm/comm.cpp.o"
+  "/home/bitcq/catkin_ws/src/livox_ros_driver2/src/comm/ldq.cpp" "/home/bitcq/catkin_ws/build/livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/comm/ldq.cpp.o"
+  "/home/bitcq/catkin_ws/src/livox_ros_driver2/src/comm/lidar_imu_data_queue.cpp" "/home/bitcq/catkin_ws/build/livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/comm/lidar_imu_data_queue.cpp.o"
+  "/home/bitcq/catkin_ws/src/livox_ros_driver2/src/comm/pub_handler.cpp" "/home/bitcq/catkin_ws/build/livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/comm/pub_handler.cpp.o"
+  "/home/bitcq/catkin_ws/src/livox_ros_driver2/src/comm/semaphore.cpp" "/home/bitcq/catkin_ws/build/livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/comm/semaphore.cpp.o"
+  "/home/bitcq/catkin_ws/src/livox_ros_driver2/src/driver_node.cpp" "/home/bitcq/catkin_ws/build/livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/driver_node.cpp.o"
+  "/home/bitcq/catkin_ws/src/livox_ros_driver2/src/lddc.cpp" "/home/bitcq/catkin_ws/build/livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/lddc.cpp.o"
+  "/home/bitcq/catkin_ws/src/livox_ros_driver2/src/lds.cpp" "/home/bitcq/catkin_ws/build/livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/lds.cpp.o"
+  "/home/bitcq/catkin_ws/src/livox_ros_driver2/src/lds_lidar.cpp" "/home/bitcq/catkin_ws/build/livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/lds_lidar.cpp.o"
+  "/home/bitcq/catkin_ws/src/livox_ros_driver2/src/livox_ros_driver2.cpp" "/home/bitcq/catkin_ws/build/livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/livox_ros_driver2.cpp.o"
+  "/home/bitcq/catkin_ws/src/livox_ros_driver2/src/parse_cfg_file/parse_cfg_file.cpp" "/home/bitcq/catkin_ws/build/livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/parse_cfg_file/parse_cfg_file.cpp.o"
+  "/home/bitcq/catkin_ws/src/livox_ros_driver2/src/parse_cfg_file/parse_livox_lidar_cfg.cpp" "/home/bitcq/catkin_ws/build/livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/parse_cfg_file/parse_livox_lidar_cfg.cpp.o"
+  )
+set(CMAKE_CXX_COMPILER_ID "GNU")
+
+# Preprocessor definitions for this target.
+set(CMAKE_TARGET_DEFINITIONS_CXX
+  "BUILDING_ROS1"
+  "ROSCONSOLE_BACKEND_LOG4CXX"
+  "ROS_BUILD_SHARED_LIBS=1"
+  "ROS_PACKAGE_NAME=\"livox_ros_driver2\""
   )
 
-# The set of dependency files which are needed:
-set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/bitcq/catkin_ws/src/livox_ros_driver2/src/call_back/lidar_common_callback.cpp" "livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/call_back/lidar_common_callback.cpp.o" "gcc" "livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/call_back/lidar_common_callback.cpp.o.d"
-  "/home/bitcq/catkin_ws/src/livox_ros_driver2/src/call_back/livox_lidar_callback.cpp" "livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/call_back/livox_lidar_callback.cpp.o" "gcc" "livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/call_back/livox_lidar_callback.cpp.o.d"
-  "/home/bitcq/catkin_ws/src/livox_ros_driver2/src/comm/cache_index.cpp" "livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/comm/cache_index.cpp.o" "gcc" "livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/comm/cache_index.cpp.o.d"
-  "/home/bitcq/catkin_ws/src/livox_ros_driver2/src/comm/comm.cpp" "livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/comm/comm.cpp.o" "gcc" "livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/comm/comm.cpp.o.d"
-  "/home/bitcq/catkin_ws/src/livox_ros_driver2/src/comm/ldq.cpp" "livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/comm/ldq.cpp.o" "gcc" "livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/comm/ldq.cpp.o.d"
-  "/home/bitcq/catkin_ws/src/livox_ros_driver2/src/comm/lidar_imu_data_queue.cpp" "livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/comm/lidar_imu_data_queue.cpp.o" "gcc" "livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/comm/lidar_imu_data_queue.cpp.o.d"
-  "/home/bitcq/catkin_ws/src/livox_ros_driver2/src/comm/pub_handler.cpp" "livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/comm/pub_handler.cpp.o" "gcc" "livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/comm/pub_handler.cpp.o.d"
-  "/home/bitcq/catkin_ws/src/livox_ros_driver2/src/comm/semaphore.cpp" "livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/comm/semaphore.cpp.o" "gcc" "livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/comm/semaphore.cpp.o.d"
-  "/home/bitcq/catkin_ws/src/livox_ros_driver2/src/driver_node.cpp" "livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/driver_node.cpp.o" "gcc" "livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/driver_node.cpp.o.d"
-  "/home/bitcq/catkin_ws/src/livox_ros_driver2/src/lddc.cpp" "livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/lddc.cpp.o" "gcc" "livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/lddc.cpp.o.d"
-  "/home/bitcq/catkin_ws/src/livox_ros_driver2/src/lds.cpp" "livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/lds.cpp.o" "gcc" "livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/lds.cpp.o.d"
-  "/home/bitcq/catkin_ws/src/livox_ros_driver2/src/lds_lidar.cpp" "livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/lds_lidar.cpp.o" "gcc" "livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/lds_lidar.cpp.o.d"
-  "/home/bitcq/catkin_ws/src/livox_ros_driver2/src/livox_ros_driver2.cpp" "livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/livox_ros_driver2.cpp.o" "gcc" "livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/livox_ros_driver2.cpp.o.d"
-  "/home/bitcq/catkin_ws/src/livox_ros_driver2/src/parse_cfg_file/parse_cfg_file.cpp" "livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/parse_cfg_file/parse_cfg_file.cpp.o" "gcc" "livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/parse_cfg_file/parse_cfg_file.cpp.o.d"
-  "/home/bitcq/catkin_ws/src/livox_ros_driver2/src/parse_cfg_file/parse_livox_lidar_cfg.cpp" "livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/parse_cfg_file/parse_livox_lidar_cfg.cpp.o" "gcc" "livox_ros_driver2/CMakeFiles/livox_ros_driver2_node.dir/src/parse_cfg_file/parse_livox_lidar_cfg.cpp.o.d"
+# The include file search paths:
+set(CMAKE_CXX_TARGET_INCLUDE_PATH
+  "/home/bitcq/catkin_ws/devel/include"
+  "/opt/ros/noetic/include"
+  "/opt/ros/noetic/share/xmlrpcpp/cmake/../../../include/xmlrpcpp"
+  "/usr/include/eigen3"
+  "/usr/include/pcl-1.10"
+  "/usr/include/vtk-7.1"
+  "/usr/include/freetype2"
+  "/usr/include/apr-1.0"
+  "/home/bitcq/catkin_ws/src/livox_ros_driver2/3rdparty"
+  "/home/bitcq/catkin_ws/src/livox_ros_driver2/src"
   )
 
 # Targets to which this target links.

@@ -37,11 +37,6 @@ if(NOT DEFINED CMAKE_CROSSCOMPILING)
   set(CMAKE_CROSSCOMPILING "FALSE")
 endif()
 
-# Set default install directory permissions.
-if(NOT DEFINED CMAKE_OBJDUMP)
-  set(CMAKE_OBJDUMP "/usr/bin/objdump")
-endif()
-
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/bitcq/catkin_ws/build/car_bringup/catkin_generated/installspace/car_bringup.pc")
 endif()
@@ -62,6 +57,10 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/car_bringup" TYPE DIRECTORY FILES "/home/bitcq/catkin_ws/src/car_bringup/config")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/car_bringup" TYPE PROGRAM FILES "/home/bitcq/catkin_ws/build/car_bringup/catkin_generated/installspace/export_tf_tree.py")
 endif()
 
@@ -70,6 +69,13 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/car_bringup" TYPE FILE FILES "/home/bitcq/catkin_ws/src/car_bringup/scripts/tf_tree_validation.py")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/car_bringup" TYPE PROGRAM FILES "/home/bitcq/catkin_ws/build/car_bringup/catkin_generated/installspace/ground_air_operation_node.py")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/car_bringup" TYPE FILE FILES
+    "/home/bitcq/catkin_ws/src/car_bringup/scripts/ground_air_operation_core.py"
+    "/home/bitcq/catkin_ws/src/car_bringup/scripts/tf_tree_validation.py"
+    )
 endif()
 

@@ -37,11 +37,6 @@ if(NOT DEFINED CMAKE_CROSSCOMPILING)
   set(CMAKE_CROSSCOMPILING "FALSE")
 endif()
 
-# Set default install directory permissions.
-if(NOT DEFINED CMAKE_OBJDUMP)
-  set(CMAKE_OBJDUMP "/usr/bin/objdump")
-endif()
-
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   
       if (NOT EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}")
@@ -61,7 +56,7 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-  file(INSTALL DESTINATION "/home/bitcq/catkin_ws/install" TYPE PROGRAM FILES "/home/bitcq/catkin_ws/build/catkin_generated/installspace/_setup_util.py")
+file(INSTALL DESTINATION "/home/bitcq/catkin_ws/install" TYPE PROGRAM FILES "/home/bitcq/catkin_ws/build/catkin_generated/installspace/_setup_util.py")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -73,7 +68,7 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-  file(INSTALL DESTINATION "/home/bitcq/catkin_ws/install" TYPE PROGRAM FILES "/home/bitcq/catkin_ws/build/catkin_generated/installspace/env.sh")
+file(INSTALL DESTINATION "/home/bitcq/catkin_ws/install" TYPE PROGRAM FILES "/home/bitcq/catkin_ws/build/catkin_generated/installspace/env.sh")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -85,7 +80,7 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-  file(INSTALL DESTINATION "/home/bitcq/catkin_ws/install" TYPE FILE FILES
+file(INSTALL DESTINATION "/home/bitcq/catkin_ws/install" TYPE FILE FILES
     "/home/bitcq/catkin_ws/build/catkin_generated/installspace/setup.bash"
     "/home/bitcq/catkin_ws/build/catkin_generated/installspace/local_setup.bash"
     )
@@ -100,7 +95,7 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-  file(INSTALL DESTINATION "/home/bitcq/catkin_ws/install" TYPE FILE FILES
+file(INSTALL DESTINATION "/home/bitcq/catkin_ws/install" TYPE FILE FILES
     "/home/bitcq/catkin_ws/build/catkin_generated/installspace/setup.sh"
     "/home/bitcq/catkin_ws/build/catkin_generated/installspace/local_setup.sh"
     )
@@ -115,7 +110,7 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-  file(INSTALL DESTINATION "/home/bitcq/catkin_ws/install" TYPE FILE FILES
+file(INSTALL DESTINATION "/home/bitcq/catkin_ws/install" TYPE FILE FILES
     "/home/bitcq/catkin_ws/build/catkin_generated/installspace/setup.zsh"
     "/home/bitcq/catkin_ws/build/catkin_generated/installspace/local_setup.zsh"
     )
@@ -130,7 +125,7 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-  file(INSTALL DESTINATION "/home/bitcq/catkin_ws/install" TYPE FILE FILES
+file(INSTALL DESTINATION "/home/bitcq/catkin_ws/install" TYPE FILE FILES
     "/home/bitcq/catkin_ws/build/catkin_generated/installspace/setup.fish"
     "/home/bitcq/catkin_ws/build/catkin_generated/installspace/local_setup.fish"
     )
@@ -145,25 +140,29 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-  file(INSTALL DESTINATION "/home/bitcq/catkin_ws/install" TYPE FILE FILES "/home/bitcq/catkin_ws/build/catkin_generated/installspace/.rosinstall")
+file(INSTALL DESTINATION "/home/bitcq/catkin_ws/install" TYPE FILE FILES "/home/bitcq/catkin_ws/build/catkin_generated/installspace/.rosinstall")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   include("/home/bitcq/catkin_ws/build/gtest/cmake_install.cmake")
+  include("/home/bitcq/catkin_ws/build/EPGeneral_device_config/cmake_install.cmake")
   include("/home/bitcq/catkin_ws/build/lukong_fusion_client/cmake_install.cmake")
   include("/home/bitcq/catkin_ws/build/ground_air_msgs/cmake_install.cmake")
   include("/home/bitcq/catkin_ws/build/teb_local_planner_tutorials/cmake_install.cmake")
   include("/home/bitcq/catkin_ws/build/car_bringup/cmake_install.cmake")
   include("/home/bitcq/catkin_ws/build/ground_air_mission/cmake_install.cmake")
+  include("/home/bitcq/catkin_ws/build/a8_mini_camera/cmake_install.cmake")
   include("/home/bitcq/catkin_ws/build/ground_air_mapping/cmake_install.cmake")
+  include("/home/bitcq/catkin_ws/build/EPGeneral_video_srt/cmake_install.cmake")
   include("/home/bitcq/catkin_ws/build/ground_air_control/cmake_install.cmake")
   include("/home/bitcq/catkin_ws/build/ground_air_localization/cmake_install.cmake")
   include("/home/bitcq/catkin_ws/build/dynamic_mapping/cmake_install.cmake")
   include("/home/bitcq/catkin_ws/build/livox_ros_driver2/cmake_install.cmake")
   include("/home/bitcq/catkin_ws/build/fast_lio_open3d/cmake_install.cmake")
   include("/home/bitcq/catkin_ws/build/lidar_ground_filter/cmake_install.cmake")
-  include("/home/bitcq/catkin_ws/build/spiritwing_web/cmake_install.cmake")
+  include("/home/bitcq/catkin_ws/build/EPGeneral_task_control/cmake_install.cmake")
+  include("/home/bitcq/catkin_ws/build/epaguav_ground_air_task_adapter/cmake_install.cmake")
   include("/home/bitcq/catkin_ws/build/vision_to_mavros/cmake_install.cmake")
 
 endif()

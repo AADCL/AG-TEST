@@ -1636,4 +1636,5 @@ ground_air_localization/CMakeFiles/global_relocalizer_node.dir/src/global_reloca
  /opt/ros/noetic/include/sensor_msgs/impl/point_cloud2_iterator.h
  /opt/ros/noetic/include/std_msgs/Bool.h
  /opt/ros/noetic/include/std_msgs/Float64.h
+ /opt/ros/noetic/include/std_msgs/String.h
 

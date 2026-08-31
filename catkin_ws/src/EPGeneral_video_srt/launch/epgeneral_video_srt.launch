@@ -1,0 +1,15 @@
+<launch>
+  <arg name="device_config_file" default="$(find epgeneral_device_config)/config/device.yaml" />
+  <arg name="video_config_file" default="$(find epgeneral_video_srt)/config/video.yaml" />
+  <!-- Optional launch-level overrides keep the upstream YAML defaults reusable. -->
+  <arg name="image_topic" default="/camera/image_raw" />
+  <arg name="srt_port" default="9000" />
+
+  <rosparam command="load" file="$(arg device_config_file)" ns="edge_device" />
+
+  <node pkg="epgeneral_video_srt" type="epgeneral_video_srt_node" name="epgeneral_video_srt" output="screen">
+    <rosparam command="load" file="$(arg video_config_file)" />
+    <param name="image_topic" value="$(arg image_topic)" />
+    <param name="srt_port" value="$(arg srt_port)" />
+  </node>
+</launch>

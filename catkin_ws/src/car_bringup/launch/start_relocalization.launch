@@ -6,13 +6,13 @@
   <arg name="service_wait_timeout" default="90.0" />
   <arg name="relocalize_timeout" default="60.0" />
 
-  <!-- Localization-only startup: navigation and all motion producers stay disabled. -->
-  <include if="$(arg start_stack)" file="$(find car_bringup)/launch/autonomy.launch">
-    <arg name="start_mavros" value="$(arg start_mavros)" />
+  <!--
+    基础层必须提前单独启动。start_mavros 仅为兼容旧命令保留，不再在此处生效；
+    本入口只启动重定位层并调用加载地图/全局重定位，不启动任务与运动节点。
+  -->
+  <include if="$(arg start_stack)" file="$(find car_bringup)/launch/relocalization_system.launch">
     <arg name="maps_root" value="$(arg maps_root)" />
-    <arg name="start_navigation" value="false" />
-    <arg name="start_control" value="false" />
-    <arg name="start_mission" value="false" />
+    <arg name="relocalize_timeout" value="$(arg relocalize_timeout)" />
   </include>
 
   <node pkg="car_bringup"

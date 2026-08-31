@@ -18,7 +18,7 @@ from ground_air_localization.map_registry import MapRegistry, MapRegistryError
 class MapManagerNode:
     def __init__(self):
         root = rospy.get_param("~maps_root", "/home/bitcq/catkin_ws/maps")
-        self._map_frame = rospy.get_param("~map_frame", "world")
+        self._map_frame = rospy.get_param("~map_frame", "map")
         self._registry = MapRegistry(root)
         self._lock = threading.RLock()
         self._map_server = None

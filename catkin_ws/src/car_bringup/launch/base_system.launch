@@ -1,0 +1,64 @@
+<launch>
+  <!--
+    基础层：先于建图、重定位和任务层启动，并在整个作业期间保持运行。
+    本文件只负责飞控通信、激光雷达驱动、A8 Mini 视频和不随工作模式变化的静态 TF；
+    不启动 FAST-LIO、点云地面滤除、地图、定位、导航或运动控制节点。
+  -->
+  <arg name="start_mavros" default="true" />
+  <arg name="fcu_url" default="/dev/serial/by-id/usb-CUAV_PX4_CUAV_Nora_0-if00:57600" />
+  <arg name="gcs_url" default="" />
+  <arg name="start_livox" default="true" />
+  <arg name="start_a8_camera" default="true" />
+  <arg name="start_video_srt" default="true" />
+  <arg name="a8_camera_ip" default="192.168.144.25" />
+  <arg name="a8_image_topic" default="/a8_cam/image_raw" />
+  <arg name="srt_port" default="9000" />
+  <arg name="odom_frame" default="odom" />
+  <arg name="camera_init_frame" default="camera_init" />
+  <arg name="body_frame" default="body" />
+  <arg name="base_frame" default="base_link" />
+
+  <!-- MAVROS 建立伴随计算机与 CUAV/PX4 的通信；启动本身不会解锁或切换模式。 -->
+  <include if="$(arg start_mavros)" file="$(find mavros)/launch/px4.launch">
+    <arg name="fcu_url" value="$(arg fcu_url)" />
+    <arg name="gcs_url" value="$(arg gcs_url)" />
+  </include>
+
+  <!-- MID360 原始点云统一标记为 base_link；系统不再使用 livox_frame。 -->
+  <include if="$(arg start_livox)" file="$(find livox_ros_driver2)/launch_ROS1/msg_MID360.launch">
+    <arg name="msg_frame_id" value="$(arg base_frame)" />
+  </include>
+
+  <!--
+    A8 Mini 通过独立有线网段提供 RTSP 主码流。节点只发布 ROS 图像，不控制云台，
+    相机断流不会终止 MAVROS、Livox 或基础 launch。
+  -->
+  <include if="$(arg start_a8_camera)" file="$(find a8_mini_camera)/launch/a8_mini_camera.launch">
+    <arg name="camera_ip" value="$(arg a8_camera_ip)" />
+    <arg name="image_topic" value="$(arg a8_image_topic)" />
+  </include>
+
+  <!--
+    CCS 官方视频节点将 ROS 图像编码为 H.264/MPEG-TS，并在 UDP 9000 作为
+    SRT Listener 等待 CCS_dev 的按需 Caller；无需在机器人端配置地面站地址。
+  -->
+  <include if="$(arg start_video_srt)" file="$(find epgeneral_video_srt)/launch/epgeneral_video_srt.launch">
+    <arg name="device_config_file" value="$(find epgeneral_device_config)/config/device.yaml" />
+    <arg name="video_config_file" value="$(find car_bringup)/config/a8_video.yaml" />
+    <arg name="image_topic" value="$(arg a8_image_topic)" />
+    <arg name="srt_port" value="$(arg srt_port)" />
+  </include>
+
+  <!--
+    固定的局部坐标系对齐关系。camera_init -> body 由 FAST-LIO 动态发布，
+    map -> odom 则由建图层或重定位层独占发布。
+  -->
+  <node pkg="tf2_ros"
+        type="static_transform_publisher"
+        name="odom_camera_init_broadcaster"
+        args="0 0 0 0 0 0 $(arg odom_frame) $(arg camera_init_frame)" />
+  <node pkg="tf2_ros"
+        type="static_transform_publisher"
+        name="base_link_body_broadcaster"
+        args="0 0 0 0 0 0 $(arg body_frame) $(arg base_frame)" />
+</launch>

@@ -1,0 +1,21 @@
+<launch>
+  <!--
+    重定位层：在 base_system.launch 已运行后启动，并在后续任务期间保持运行。
+    本层负责实时 FAST-LIO、历史地图加载、全局配准、质量跟踪及 map -> odom TF。
+    不启动建图、导航或任何运动控制节点。
+  -->
+  <arg name="maps_root" default="/home/bitcq/catkin_ws/maps" />
+  <arg name="relocalize_timeout" default="60.0" />
+  <arg name="start_fastlio_odometry_to_px4" default="true" />
+
+  <!-- 为未知初始位姿重定位提供实时 /cloud_registered 和 /Odometry。 -->
+  <include file="$(find car_bringup)/launch/fastlio_pipeline.launch">
+    <arg name="start_fastlio_odometry_to_px4" value="$(arg start_fastlio_odometry_to_px4)" />
+  </include>
+
+  <!-- 地图管理器加载历史 PCD/PGM，重定位器确认成功后独占 map -> odom。 -->
+  <include file="$(find ground_air_localization)/launch/localization.launch">
+    <arg name="maps_root" value="$(arg maps_root)" />
+    <arg name="relocalize_timeout" value="$(arg relocalize_timeout)" />
+  </include>
+</launch>

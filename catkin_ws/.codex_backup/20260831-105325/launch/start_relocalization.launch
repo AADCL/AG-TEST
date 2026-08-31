@@ -1,0 +1,29 @@
+<launch>
+  <arg name="map_id" />
+  <arg name="start_stack" default="true" />
+  <arg name="start_mavros" default="false" />
+  <arg name="maps_root" default="/home/bitcq/catkin_ws/maps" />
+  <arg name="service_wait_timeout" default="90.0" />
+  <arg name="relocalize_timeout" default="60.0" />
+
+  <!-- Localization-only startup: navigation and all motion producers stay disabled. -->
+  <include if="$(arg start_stack)" file="$(find car_bringup)/launch/autonomy.launch">
+    <arg name="start_mavros" value="$(arg start_mavros)" />
+    <arg name="maps_root" value="$(arg maps_root)" />
+    <arg name="start_navigation" value="false" />
+    <arg name="start_control" value="false" />
+    <arg name="start_mission" value="false" />
+  </include>
+
+  <node pkg="car_bringup"
+        type="ground_air_operation_node.py"
+        name="ground_air_start_relocalization"
+        output="screen"
+        required="true">
+    <param name="operation" value="relocalize" />
+    <param name="map_id" value="$(arg map_id)" />
+    <param name="service_wait_timeout" value="$(arg service_wait_timeout)" />
+    <param name="relocalize_timeout" value="$(arg relocalize_timeout)" />
+    <param name="keep_alive" value="$(arg start_stack)" />
+  </node>
+</launch>

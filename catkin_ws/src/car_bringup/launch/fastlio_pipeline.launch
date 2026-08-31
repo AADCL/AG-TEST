@@ -1,0 +1,35 @@
+<launch>
+  <!--
+    内部公共片段：由 mapping_system.launch 和 relocalization_system.launch 复用。
+    使用前必须先启动 base_system.launch，以保证 MID360 和 MAVROS 已就绪。
+  -->
+  <arg name="start_fast_lio" default="true" />
+  <arg name="start_fastlio_odometry_to_px4" default="true" />
+  <arg name="odometry_input_topic" default="/Odometry" />
+  <arg name="mavros_odometry_output_topic" default="/mavros/odometry/out" />
+  <arg name="camera_init_frame" default="camera_init" />
+  <arg name="body_frame" default="body" />
+  <arg name="odom_frame" default="odom" />
+  <arg name="base_frame" default="base_link" />
+
+  <!-- FAST-LIO 输出 /Odometry、注册点云以及 camera_init -> body 动态 TF。 -->
+  <include if="$(arg start_fast_lio)" file="$(find fast_lio_open3d)/launch/mapping_mid360.launch" />
+
+  <!--
+    将 FAST-LIO 的 ENU/FLU 里程计送入 MAVROS odometry/out；坐标制转换由 MAVROS 完成。
+    该节点只转发外部里程计，不执行解锁、起飞、降落或模式切换。
+  -->
+  <node if="$(arg start_fastlio_odometry_to_px4)"
+        pkg="car_bringup"
+        type="fastlio_odometry_adapter.py"
+        name="fastlio_odometry_to_px4"
+        output="screen"
+        required="true">
+    <param name="input_topic" value="$(arg odometry_input_topic)" />
+    <param name="output_topic" value="$(arg mavros_odometry_output_topic)" />
+    <param name="expected_frame_id" value="$(arg camera_init_frame)" />
+    <param name="expected_child_frame_id" value="$(arg body_frame)" />
+    <param name="output_frame_id" value="$(arg odom_frame)" />
+    <param name="output_child_frame_id" value="$(arg base_frame)" />
+  </node>
+</launch>

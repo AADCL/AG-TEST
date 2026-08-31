@@ -1,0 +1,32 @@
+<launch>
+  <!--
+    建图层：在 base_system.launch 已运行后单独启动。
+    本层拥有 FAST-LIO、地面滤除、动态二维栅格、地图记录和建图状态 map -> odom TF。
+    不得与 relocalization_system.launch 同时运行，以避免 map -> odom 和 /map 发布冲突。
+  -->
+  <arg name="maps_root" default="/home/bitcq/catkin_ws/maps" />
+  <arg name="start_fastlio_odometry_to_px4" default="true" />
+  <arg name="start_ground_filter" default="true" />
+  <arg name="start_dynamic_mapping" default="true" />
+  <arg name="start_map_recorder" default="true" />
+  <arg name="start_fusion_client" default="true" />
+
+  <!-- 建图和重定位共用同一套 FAST-LIO 配置，但绝不会同时启动两份实例。 -->
+  <include file="$(find car_bringup)/launch/fastlio_pipeline.launch">
+    <arg name="start_fastlio_odometry_to_px4" value="$(arg start_fastlio_odometry_to_px4)" />
+  </include>
+
+  <!-- 地面滤除生成动态栅格地图所需的非地面点云。静态 TF 已由基础层发布。 -->
+  <include if="$(arg start_ground_filter)" file="$(find pcl_test)/launch/filter_ground.launch" />
+
+  <!-- dynamic_mapping 发布建图期间的二维 /map，供记录器保存为 PGM/YAML。 -->
+  <include if="$(arg start_dynamic_mapping)" file="$(find dynamic_mapping)/launch/dynamic_mapping.launch" />
+
+  <!-- 地图记录器累计注册点云，并独占建图状态下的 map -> odom 恒等 TF。 -->
+  <include if="$(arg start_map_recorder)" file="$(find ground_air_mapping)/launch/mapping.launch">
+    <arg name="maps_root" value="$(arg maps_root)" />
+  </include>
+
+  <!-- 可选地向指控侧发送实时里程计和注册点云；不参与本地地图计算。 -->
+  <include if="$(arg start_fusion_client)" file="$(find lukong_fusion_client)/launch/lukong_fusion_client.launch" />
+</launch>

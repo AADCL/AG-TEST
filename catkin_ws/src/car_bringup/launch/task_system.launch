@@ -1,0 +1,36 @@
+<launch>
+  <!--
+    任务层：仅在 base_system.launch 与 relocalization_system.launch 均已运行，
+    且 /ground_air/localization/valid 为 true 后启动。任务层不重复启动传感器或定位。
+    启动过程保持被动，不会自动解锁、起飞、降落或切换机械模态。
+  -->
+  <arg name="start_navigation" default="true" />
+  <arg name="start_control" default="true" />
+  <arg name="start_mission" default="true" />
+  <arg name="start_ccs_task_adapter" default="false" />
+  <arg name="ccs_mission_root" default="/home/bitcq/ccs_edge_ws/mission" />
+  <arg name="takeoff_height" default="1.0" />
+  <arg name="dwell_seconds" default="2.0" />
+  <arg name="goal_frame" default="map" />
+
+  <!-- move_base 负责静态地图全局规划、实时点云局部避障和 /navigation/cmd_vel 输出。 -->
+  <include if="$(arg start_navigation)" file="$(find teb_local_planner_tutorials)/launch/bz_navigation.launch">
+    <arg name="enable_drone_mode" value="false" />
+  </include>
+
+  <!-- 控制层负责空地模式服务、速度路由、急停闭锁和地面执行器。 -->
+  <include if="$(arg start_control)" file="$(find ground_air_control)/launch/control.launch">
+    <arg name="takeoff_height" value="$(arg takeoff_height)" />
+  </include>
+
+  <!-- 任务执行器按有序任务点调用 move_base，并在每个任务点停留指定时间。 -->
+  <include if="$(arg start_mission)" file="$(find ground_air_mission)/launch/mission.launch">
+    <arg name="dwell_seconds" value="$(arg dwell_seconds)" />
+    <arg name="goal_frame" value="$(arg goal_frame)" />
+  </include>
+
+  <!-- CCS 适配器默认关闭；对接指控平台时显式传入 start_ccs_task_adapter:=true。 -->
+  <include if="$(arg start_ccs_task_adapter)" file="$(find epaguav_ground_air_task_adapter)/launch/task_adapter.launch">
+    <arg name="mission_root" value="$(arg ccs_mission_root)" />
+  </include>
+</launch>

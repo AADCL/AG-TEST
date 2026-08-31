@@ -1,0 +1,8 @@
+prefix=/home/bitcq/catkin_ws/install
+
+Name: epgeneral_video_srt
+Description: Description of epgeneral_video_srt
+Version: 0.1.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: cv_bridge epgeneral_device_config image_transport roscpp sensor_msgs

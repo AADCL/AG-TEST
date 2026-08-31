@@ -8,7 +8,7 @@
   <arg name="min_points" default="500" />
   <arg name="map_frame" default="map" />
   <arg name="odom_frame" default="odom" />
-  <arg name="camera_init_frame" default="camera_init" />
+  <!-- odom -> camera_init 由 car_bringup/base_system.launch 唯一发布。 -->
 
   <node pkg="ground_air_mapping"
         type="map_recorder_node"
@@ -24,12 +24,7 @@
     <param name="min_points" value="$(arg min_points)" />
   </node>
 
-  <!-- Mapping starts with coincident PX4 odom and FAST-LIO camera_init origins. -->
-  <node pkg="tf2_ros"
-        type="static_transform_publisher"
-        name="odom_camera_init_broadcaster"
-        args="0 0 0 0 0 0 $(arg odom_frame) $(arg camera_init_frame)" />
-
+  <!-- 建图模式只拥有 map -> odom；基础层拥有其下方的静态 TF。 -->
   <node pkg="ground_air_localization"
         type="world_tf_owner_node.py"
         name="ground_air_world_tf_owner"

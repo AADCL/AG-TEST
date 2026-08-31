@@ -1,0 +1,8 @@
+prefix=/home/bitcq/catkin_ws/install
+
+Name: epgeneral_task_control
+Description: Description of epgeneral_task_control
+Version: 0.4.3
+Cflags: -I${prefix}/include
+Libs: -L${prefix}/lib 
+Requires: message_runtime rospy geometry_msgs std_msgs nav_msgs actionlib move_base_msgs tf2_ros tf2_geometry_msgs epgeneral_device_config

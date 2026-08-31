@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>a8_mini_camera</name>
+  <version>0.1.0</version>
+  <description>Lightweight SIYI A8 Mini RTSP to ROS image bridge.</description>
+  <maintainer email="bitcq@example.com">bitcq</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>cv_bridge</depend>
+  <depend>rospy</depend>
+  <depend>sensor_msgs</depend>
+  <exec_depend>python3-opencv</exec_depend>
+  <test_depend>python3-nose</test_depend>
+
+  <export />
+</package>

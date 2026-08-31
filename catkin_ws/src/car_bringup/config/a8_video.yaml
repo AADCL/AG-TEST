@@ -1,0 +1,12 @@
+# SIYI A8 Mini video profile for CCS_dev's on-demand SRT Caller.
+camera_model: "SIYI A8 Mini"
+image_topic: "/a8_cam/image_raw"
+image_message_type: "sensor_msgs/Image"
+output_width: 640
+output_height: 480
+framerate: 30
+srt_bind_address: "0.0.0.0"
+srt_port: 9000
+srt_latency_ms: 120
+bitrate_kbps: 2000
+frame_timeout_seconds: 5.0

@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- SIYI A8 Mini RTSP-to-ROS image bridge. This launch never controls the gimbal. -->
+  <arg name="camera_ip" default="192.168.144.25" />
+  <arg name="image_topic" default="/a8_cam/image_raw" />
+  <arg name="frame_id" default="a8_cam" />
+  <arg name="publish_rate" default="30.0" />
+  <arg name="reconnect_initial_delay" default="1.0" />
+  <arg name="reconnect_maximum_delay" default="8.0" />
+
+  <node pkg="a8_mini_camera"
+        type="a8_mini_camera_node.py"
+        name="a8_mini_camera"
+        output="screen">
+    <param name="camera_ip" value="$(arg camera_ip)" />
+    <param name="image_topic" value="$(arg image_topic)" />
+    <param name="frame_id" value="$(arg frame_id)" />
+    <param name="publish_rate" value="$(arg publish_rate)" />
+    <param name="reconnect_initial_delay" value="$(arg reconnect_initial_delay)" />
+    <param name="reconnect_maximum_delay" value="$(arg reconnect_maximum_delay)" />
+  </node>
+</launch>

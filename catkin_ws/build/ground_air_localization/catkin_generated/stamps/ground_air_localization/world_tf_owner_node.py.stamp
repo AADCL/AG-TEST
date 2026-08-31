@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Single authority for the world -> camera_init transform."""
+"""Single authority for the map -> odom transform."""
 
 import copy
 import threading
@@ -15,8 +15,8 @@ class WorldTfOwner:
         self._mode = rospy.get_param("~mode", "localization")
         if self._mode not in ("mapping", "localization"):
             raise rospy.ROSInitException("~mode must be mapping or localization")
-        self._map_frame = rospy.get_param("~map_frame", "world")
-        self._odom_frame = rospy.get_param("~odom_frame", "camera_init")
+        self._map_frame = rospy.get_param("~map_frame", "map")
+        self._odom_frame = rospy.get_param("~odom_frame", "odom")
         rate = float(rospy.get_param("~rate", 20.0))
         if rate <= 0.0:
             raise rospy.ROSInitException("~rate must be positive")

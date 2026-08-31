@@ -104,7 +104,7 @@ class MissionExecutorNode:
         goal = MoveBaseGoal()
         goal.target_pose = pose
         if not goal.target_pose.header.frame_id:
-            goal.target_pose.header.frame_id = rospy.get_param("~default_goal_frame", "world")
+            goal.target_pose.header.frame_id = rospy.get_param("~default_goal_frame", "map")
         goal.target_pose.header.stamp = rospy.Time.now()
         self._move_base.send_goal(goal, done_cb=self._move_base_done_cb)
 

@@ -1,9 +1,17 @@
 <launch>
-    <!-- 滤地面 -->
-    <include file="$(find pcl_test)/launch/filter_ground.launch" />
-    <!-- 动态全局地图生成 -->
-    <include file="$(find dynamic_mapping)/launch/dynamic_mapping.launch" />
-    <!-- 规划避障 -->
-    <include file="$(find teb_local_planner_tutorials)/launch/bz_navigation.launch" />
+  <!--
+    兼容入口：bringup.launch 现在仅代理新的基础层。
+    推荐直接使用 base_system.launch，以明确后续还需按需启动功能层。
+  -->
+  <arg name="start_mavros" default="true" />
+  <arg name="fcu_url" default="/dev/serial/by-id/usb-CUAV_PX4_CUAV_Nora_0-if00:57600" />
+  <arg name="gcs_url" default="" />
+  <arg name="start_livox" default="true" />
 
+  <include file="$(find car_bringup)/launch/base_system.launch">
+    <arg name="start_mavros" value="$(arg start_mavros)" />
+    <arg name="fcu_url" value="$(arg fcu_url)" />
+    <arg name="gcs_url" value="$(arg gcs_url)" />
+    <arg name="start_livox" value="$(arg start_livox)" />
+  </include>
 </launch>

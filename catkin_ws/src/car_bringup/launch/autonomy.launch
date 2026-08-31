@@ -1,23 +1,29 @@
 <launch>
-  <arg name="start_mavros" default="false" />
+  <!--
+    兼容入口：在基础层已运行的前提下启动重定位，并可选择附加任务层。
+    默认只启动重定位，确保未确认定位有效时不会产生导航运动。
+  -->
   <arg name="maps_root" default="/home/bitcq/catkin_ws/maps" />
-  <!-- Safe first-stage defaults: localization/platform only, no motion producers. -->
-  <arg name="start_navigation" default="false" />
-  <arg name="start_control" default="false" />
-  <arg name="start_mission" default="false" />
+  <arg name="relocalize_timeout" default="60.0" />
+  <arg name="start_task" default="false" />
+  <arg name="start_navigation" default="true" />
+  <arg name="start_control" default="true" />
+  <arg name="start_mission" default="true" />
   <arg name="start_ccs_task_adapter" default="false" />
   <arg name="ccs_mission_root" default="/home/bitcq/ccs_edge_ws/mission" />
+  <arg name="start_mavros" default="false" />
 
-  <include file="$(find car_bringup)/launch/ground_air_full.launch">
-    <arg name="start_mavros" value="$(arg start_mavros)" />
-    <arg name="start_dynamic_mapping" value="false" />
-    <arg name="start_localization" value="true" />
+  <!-- start_mavros 仅为兼容旧命令保留；基础层必须提前独立启动。 -->
+  <include file="$(find car_bringup)/launch/relocalization_system.launch">
+    <arg name="maps_root" value="$(arg maps_root)" />
+    <arg name="relocalize_timeout" value="$(arg relocalize_timeout)" />
+  </include>
+
+  <include if="$(arg start_task)" file="$(find car_bringup)/launch/task_system.launch">
     <arg name="start_navigation" value="$(arg start_navigation)" />
     <arg name="start_control" value="$(arg start_control)" />
     <arg name="start_mission" value="$(arg start_mission)" />
     <arg name="start_ccs_task_adapter" value="$(arg start_ccs_task_adapter)" />
     <arg name="ccs_mission_root" value="$(arg ccs_mission_root)" />
-    <arg name="start_fusion_client" value="false" />
-    <arg name="maps_root" value="$(arg maps_root)" />
   </include>
 </launch>

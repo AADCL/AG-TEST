@@ -1,0 +1,7 @@
+set(epgeneral_task_control_SETUP_PY_SETUP_MODULE "setuptools")
+set(epgeneral_task_control_SETUP_PY_VERSION "0.4.3")
+set(epgeneral_task_control_SETUP_PY_SCRIPTS "")
+set(epgeneral_task_control_SETUP_PY_PACKAGES "epgeneral_task_control")
+set(epgeneral_task_control_SETUP_PY_PACKAGE_DIRS "src/epgeneral_task_control")
+set(epgeneral_task_control_SETUP_PY_MODULES "")
+set(epgeneral_task_control_SETUP_PY_MODULE_DIRS "")

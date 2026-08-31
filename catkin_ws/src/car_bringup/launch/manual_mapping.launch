@@ -1,21 +1,15 @@
 <launch>
-  <arg name="start_mavros" default="true" />
+  <!--
+    兼容入口：手控建图层。运行前必须先单独启动 base_system.launch。
+    本入口不会启动软件运动控制，车辆移动仍由遥控器负责。
+  -->
   <arg name="maps_root" default="/home/bitcq/catkin_ws/maps" />
+  <arg name="start_mavros" default="false" />
+  <arg name="start_fusion_client" default="true" />
 
-  <include file="$(find car_bringup)/launch/ground_air_full.launch">
-    <arg name="start_mavros" value="$(arg start_mavros)" />
-    <arg name="start_fastlio_odometry_to_px4" value="true" />
-    <arg name="start_dynamic_mapping" value="true" />
-    <arg name="start_localization" value="false" />
-    <arg name="start_navigation" value="false" />
-    <arg name="start_control" value="false" />
-    <arg name="start_mission" value="false" />
-    <arg name="start_vision_to_mavros" value="false" />
-    <arg name="start_fusion_client" value="true" />
-  </include>
-
-  <!-- Recorder plus identity map->odom->camera_init TF. Vehicle motion remains RC-only. -->
-  <include file="$(find ground_air_mapping)/launch/mapping.launch">
+  <!-- start_mavros 仅为兼容旧命令保留；基础层不再由此文件启动。 -->
+  <include file="$(find car_bringup)/launch/mapping_system.launch">
     <arg name="maps_root" value="$(arg maps_root)" />
+    <arg name="start_fusion_client" value="$(arg start_fusion_client)" />
   </include>
 </launch>

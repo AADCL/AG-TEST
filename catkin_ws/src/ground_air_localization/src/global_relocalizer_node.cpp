@@ -32,6 +32,10 @@ public:
     GlobalRelocalizer() : nh_(), pnh_("~") {
         pnh_.param<std::string>("scan_topic", scan_topic_, "/cloud_registered");
         pnh_.param<std::string>("odom_topic", odom_topic_, "/Odometry");
+        // The reference is the static PCD produced by ground_air_mapping.
+        // Live scans remain unfiltered observations for registration.
+        pnh_.param<std::string>("reference_map_filename", reference_map_filename_,
+                                "cloud_map.pcd");
         pnh_.param<std::string>("map_frame", map_frame_, "map");
         pnh_.param<std::string>("odom_frame", odom_frame_, "odom");
         pnh_.param<std::string>("scan_frame", scan_frame_, "camera_init");
@@ -159,6 +163,14 @@ private:
         std::string path;
         if (!nh_.getParam("/ground_air/active_map_pcd", path) || path.empty()) {
             error = "no active point-cloud map; call /ground_air/load_map first";
+            return false;
+        }
+        const std::string::size_type separator = path.find_last_of('/');
+        const std::string filename = separator == std::string::npos
+            ? path : path.substr(separator + 1);
+        if (filename != reference_map_filename_) {
+            error = "active point-cloud map must be the processed " +
+                    reference_map_filename_;
             return false;
         }
         if (map_.fine && map_.path == path) return true;
@@ -504,6 +516,7 @@ private:
 
     std::string scan_topic_;
     std::string odom_topic_;
+    std::string reference_map_filename_;
     std::string map_frame_;
     std::string odom_frame_;
     std::string scan_frame_;

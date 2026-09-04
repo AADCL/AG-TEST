@@ -34,6 +34,9 @@ class LocalizationRosContractTests(unittest.TestCase):
             self.assertIn(token, text)
         self.assertIn("/ground_air/relocalize", text)
         self.assertIn("/ground_air/active_map_pcd", text)
+        self.assertIn("reference_map_filename_", text)
+        self.assertIn('"cloud_map.pcd"', text)
+        self.assertIn("active point-cloud map must be the processed", text)
         self.assertIn("/ground_air/localized", text)
         self.assertIn("submap_duration_", text)
         self.assertIn("min_submap_frames_", text)
@@ -73,6 +76,8 @@ class LocalizationRosContractTests(unittest.TestCase):
         self.assertIn('name="odom_frame" default="odom"', launch)
         self.assertIn('name="scan_frame" default="camera_init"', launch)
         self.assertIn('name="scan_frame" value="$(arg scan_frame)"', launch)
+        self.assertIn('name="reference_map_filename" default="cloud_map.pcd"', launch)
+        self.assertIn('name="reference_map_filename" value="$(arg reference_map_filename)"', launch)
         self.assertIn('"scan_frame", scan_frame_, "camera_init"', source)
         self.assertIn("latest_scan_frame_ != scan_frame_", source)
 

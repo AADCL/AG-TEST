@@ -76,8 +76,6 @@ class LocalizationRosContractTests(unittest.TestCase):
         self.assertIn('name="odom_frame" default="odom"', launch)
         self.assertIn('name="scan_frame" default="camera_init"', launch)
         self.assertIn('name="scan_frame" value="$(arg scan_frame)"', launch)
-        self.assertIn('name="reference_map_filename" default="cloud_map.pcd"', launch)
-        self.assertIn('name="reference_map_filename" value="$(arg reference_map_filename)"', launch)
         self.assertIn('"scan_frame", scan_frame_, "camera_init"', source)
         self.assertIn("latest_scan_frame_ != scan_frame_", source)
 

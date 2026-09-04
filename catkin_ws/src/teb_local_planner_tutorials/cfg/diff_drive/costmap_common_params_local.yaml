@@ -21,8 +21,6 @@ obstacle_layer:
   laser_scan_sensor:
     {
       data_type: PointCloud2,
-      # Live registered cloud is intentional: dynamic obstacles must remain
-      # visible to local planning; do not replace this with static_cloud.
       topic: /cloud_registered_body,
       marking: true,
       clearing: true,

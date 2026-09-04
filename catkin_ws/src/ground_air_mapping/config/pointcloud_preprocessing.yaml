@@ -1,0 +1,42 @@
+# Mapping-only preprocessing. These parameters never feed points back to
+# FAST-LIO, localization, or the navigation costmap.
+odometry_topic: /Odometry
+static_cloud_topic: /ground_air/mapping/static_cloud
+dynamic_points_topic: /ground_air/mapping/dynamic_points
+
+min_range: 0.50
+max_range: 50.0
+scan_voxel_size: 0.05
+
+radius_filter_enable: true
+radius: 0.15
+min_neighbors: 2
+
+# Disabled until the installed vehicle bounds are measured on the real robot.
+self_filter_enable: false
+self_min_x: -0.35
+self_max_x: 0.35
+self_min_y: -0.35
+self_max_y: 0.35
+self_min_z: -0.40
+self_max_z: 0.30
+
+# Coarse 3D Bayesian occupancy used to confirm static points and remove
+# departed moving objects. The final PCD still uses voxel_size from launch.
+temporal_voxel_size: 0.20
+hit_probability: 0.70
+miss_probability: 0.40
+occupied_probability: 0.72
+clearing_probability: 0.35
+min_hit_scans: 8
+min_observation_span: 2.0
+ray_stride: 4
+max_clearing_range: 20.0
+ray_endpoint_margin: 0.30
+candidate_timeout: 5.0
+cleanup_period: 1.0
+max_temporal_voxels: 2000000
+
+max_odom_age: 0.20
+static_publish_period: 2.0
+publish_dynamic_points: false

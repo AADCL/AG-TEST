@@ -1,6 +1,13 @@
 # AG-TEST
 用于空地无人机的开发代码管理
 
+2026-0904
+在 `ground_air_mapping` 中移植 UGV 建图端半径离群点检测与三维贝叶斯运动滤波。
+新增有限值及距离裁剪、0.05 m 单帧体素降采样、0.15 m 半径离群检测，以及基于 0.20 m 粗体素的静态确认和自由空间射线清除。
+运动滤波只改变最终保存的 `cloud_map.pcd`；实时导航仍使用 `/cloud_registered_body` 感知动态障碍，FAST-LIO、重定位、TF、PGM/YAML 和既有建图服务接口保持不变。
+新增 `/ground_air/mapping/static_cloud` 诊断话题，`/ground_air/mapping/dynamic_points` 默认关闭，并补充参数 YAML、C++ 单元测试、包契约测试和中文修改说明。
+远程 `/home/bitcq/catkin_ws` 已完成单线程完整编译，`ground_air_mapping` 包级测试共 7 项、0 错误、0 失败。
+
 2026-0831
 完成 A8 Mini 云台相机与 CCS_dev 视频链路的机器人侧集成。
 新增 a8_mini_camera 功能包，通过 RTSP 读取相机主码流并发布 /a8_cam/image_raw。

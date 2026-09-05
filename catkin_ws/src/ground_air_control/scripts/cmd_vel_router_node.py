@@ -35,11 +35,20 @@ class CmdVelRouterNode:
         self.timer = rospy.Timer(rospy.Duration(1.0 / rate_hz), self._timer_callback)
 
     def _status_callback(self, message):
-        self.core.set_mode(MODE_NAMES.get(message.mode, "unknown"))
+        self.core.set_vehicle_state(
+            MODE_NAMES.get(message.mode, "unknown"), message.flight_mode
+        )
         self.core.set_emergency_stop(message.emergency_stop)
-        if message.emergency_stop or message.mode not in (
+        if (
+            message.emergency_stop
+            or message.mode not in (
             VehicleStatus.GROUND,
             VehicleStatus.AIR,
+            )
+            or (
+                message.mode == VehicleStatus.GROUND
+                and str(message.flight_mode).upper() != "OFFBOARD"
+            )
         ):
             self._publish_stop()
 

@@ -8,6 +8,21 @@ PACKAGE_ROOT = Path(__file__).resolve().parents[1]
 NODE = PACKAGE_ROOT / "scripts" / "mode_manager_node.py"
 
 
+def method_calls(name):
+    tree = ast.parse(NODE.read_text(encoding="utf-8"))
+    cls = next(node for node in tree.body if isinstance(node, ast.ClassDef))
+    method = next(
+        node
+        for node in cls.body
+        if isinstance(node, ast.FunctionDef) and node.name == name
+    )
+    return {
+        getattr(node.func, "attr", "")
+        for node in ast.walk(method)
+        if isinstance(node, ast.Call)
+    }
+
+
 class ModeManagerNodeContractTests(unittest.TestCase):
     def test_core_modules_are_installed_for_catkin_wrappers(self):
         cmake = (PACKAGE_ROOT / "CMakeLists.txt").read_text(encoding="utf-8")
@@ -28,6 +43,9 @@ class ModeManagerNodeContractTests(unittest.TestCase):
             '"/ground_air/land"',
             '"/ground_air/set_mode"',
             '"/ground_air/emergency_stop"',
+            '"/ground_air/prepare_ground"',
+            '"/ground_air/takeoff_to_altitude"',
+            '"/ground_air/set_flight_altitude"',
         ):
             self.assertIn(name, source)
 
@@ -51,13 +69,24 @@ class ModeManagerNodeContractTests(unittest.TestCase):
             source,
         )
 
-    def test_ground_drive_uses_confirmed_offboard_lifecycle(self):
+    def test_ground_drive_uses_read_only_offboard_readiness_check(self):
         source = NODE.read_text(encoding="utf-8")
-        self.assertIn('"OFFBOARD", self.ground_mode_timeout', source)
-        self.assertIn('"POSCTL", self.ground_mode_timeout', source)
-        self.assertIn("rospy.sleep(self.ground_stop_settle_time)", source)
+        self.assertIn("backend.prepare_ground", source)
 
-    def test_air_commands_use_fixed_altitude_controller(self):
+    def test_ground_estop_paths_do_not_switch_flight_mode(self):
+        self.assertNotIn(
+            "switch_flight_mode", method_calls("_engage_emergency_stop")
+        )
+        self.assertNotIn(
+            "switch_flight_mode", method_calls("_reset_emergency_stop")
+        )
+
+    def test_takeoff_disarms_a_stopped_ground_vehicle_before_physical_switch(self):
+        calls = method_calls("_takeoff_sequence")
+        self.assertIn("disarm", calls)
+        self.assertIn("switch_flight_mode", calls)
+
+    def test_air_commands_use_task_altitude_controller(self):
         source = NODE.read_text(encoding="utf-8")
         self.assertIn("altitude_kp", source)
         self.assertIn("target_altitude", source)

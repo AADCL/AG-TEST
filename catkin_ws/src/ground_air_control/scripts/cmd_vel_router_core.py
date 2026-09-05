@@ -30,6 +30,13 @@ class CmdVelRouterCore:
         if self.mode not in self.GROUND_MODES | self.AIR_MODES:
             self.last_channel = "stop"
 
+    def set_vehicle_state(self, mode, flight_mode):
+        """Gate ground commands on the operator-selected PX4 mode."""
+        mode = str(mode)
+        if mode == "ground" and str(flight_mode).upper() != "OFFBOARD":
+            mode = "unknown"
+        self.set_mode(mode)
+
     def set_emergency_stop(self, active):
         self.emergency_stop = bool(active)
         if self.emergency_stop:

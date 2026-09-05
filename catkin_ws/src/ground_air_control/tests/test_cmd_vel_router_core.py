@@ -11,6 +11,13 @@ from cmd_vel_router_core import CmdVelRouterCore  # noqa: E402
 
 
 class CmdVelRouterCoreTests(unittest.TestCase):
+    def test_ground_routing_requires_operator_selected_offboard(self):
+        core = CmdVelRouterCore(timeout=0.5)
+        core.set_vehicle_state("ground", "POSCTL")
+        self.assertEqual(core.accept((0.2, 0.0, 0.0), 1.0).channel, "stop")
+        core.set_vehicle_state("ground", "OFFBOARD")
+        self.assertEqual(core.accept((0.2, 0.0, 0.0), 1.1).channel, "ground")
+
     def setUp(self):
         self.router = CmdVelRouterCore(timeout=0.5)
 

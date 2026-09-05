@@ -11,4 +11,5 @@
   <depend>mavros_msgs</depend>
   <depend>rospy</depend>
   <depend>std_srvs</depend>
+  <test_depend>python3-nose</test_depend>
 </package>

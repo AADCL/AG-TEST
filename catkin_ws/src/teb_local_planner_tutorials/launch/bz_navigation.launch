@@ -34,7 +34,8 @@
 
 		<param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
 		<!-- <param name="base_local_planner" value="robotino_local_planner/RobotinoLocalPlanner" /> -->
-		<param name="controller_frequency" value="5.0" />
+		<!-- 地面控制链统一为 20 Hz，匹配速度路由器和 PX4 执行器。 -->
+		<param name="controller_frequency" value="20.0" />
 		<param name="controller_patience" value="15.0" />
 		<!-- 实机保守策略：规划失败或遇到不可绕行墙面时停车，不执行恢复性原地旋转。 -->
 		<param name="recovery_behavior_enabled" value="false" />

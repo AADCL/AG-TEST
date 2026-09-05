@@ -31,3 +31,7 @@ install(DIRECTORY launch config
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
   OPTIONAL
 )
+
+if(CATKIN_ENABLE_TESTING)
+  catkin_add_nosetests(tests)
+endif()

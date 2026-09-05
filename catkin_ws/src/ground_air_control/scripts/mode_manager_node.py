@@ -8,6 +8,8 @@ from ground_air_msgs.msg import VehicleStatus
 from ground_air_msgs.srv import (
     SetEmergencyStop,
     SetEmergencyStopResponse,
+    SetFlightAltitude,
+    SetFlightAltitudeResponse,
     SetVehicleMode,
     SetVehicleModeResponse,
 )
@@ -38,6 +40,8 @@ class ModeManagerNode:
         self.core = ModeManagerCore(
             takeoff_height=rospy.get_param("~takeoff_height", 1.0),
             telemetry_timeout=rospy.get_param("~telemetry_timeout", 0.5),
+            min_flight_altitude=rospy.get_param("~min_flight_altitude", 0.5),
+            max_flight_altitude=rospy.get_param("~max_flight_altitude", 3.0),
         )
         self.core.set_emergency_stop(True, "startup safety interlock")
         self.transition_timeout = float(rospy.get_param("~transition_timeout", 15.0))
@@ -60,8 +64,21 @@ class ModeManagerNode:
         self.takeoff_service = rospy.Service(
             "/ground_air/takeoff", Trigger, self._takeoff_service
         )
+        self.takeoff_to_altitude_service = rospy.Service(
+            "/ground_air/takeoff_to_altitude",
+            SetFlightAltitude,
+            self._takeoff_to_altitude_service,
+        )
+        self.set_flight_altitude_service = rospy.Service(
+            "/ground_air/set_flight_altitude",
+            SetFlightAltitude,
+            self._set_flight_altitude_service,
+        )
         self.land_service = rospy.Service(
             "/ground_air/land", Trigger, self._land_service
+        )
+        self.prepare_ground_service = rospy.Service(
+            "/ground_air/prepare_ground", Trigger, self._prepare_ground_service
         )
         self.mode_service = rospy.Service(
             "/ground_air/set_mode", SetVehicleMode, self._set_mode_service
@@ -115,7 +132,7 @@ class ModeManagerNode:
             with self._state_lock:
                 self.status_pub.publish(self._status_message())
             return True, self.core.detail
-        except (TransitionError, RuntimeError, rospy.ServiceException) as error:
+        except (TransitionError, RuntimeError, ValueError, rospy.ServiceException) as error:
             with self._state_lock:
                 self.core.fail(str(error))
                 self.status_pub.publish(self._status_message())
@@ -140,8 +157,27 @@ class ModeManagerNode:
             self._refresh_telemetry()
             self.core.finish_switch_to_ground(success)
 
-    def _takeoff_sequence(self):
-        self._switch_to_air()
+    def _takeoff_sequence(self, requested_height=None):
+        with self._state_lock:
+            self._refresh_telemetry()
+            if requested_height is not None:
+                self.core.set_takeoff_height(requested_height)
+            disarm_required = self.core.ground_disarm_required_for_takeoff(
+                rospy.get_time()
+            )
+        if disarm_required:
+            rospy.sleep(self.ground_stop_settle_time)
+            if not self.backend.switch_flight_mode(
+                "POSCTL", self.ground_mode_timeout
+            ):
+                raise RuntimeError("POSCTL confirmation failed before takeoff")
+            if not self.backend.disarm(self.ground_mode_timeout):
+                raise RuntimeError("ground vehicle disarm failed before takeoff")
+        with self._state_lock:
+            self._refresh_telemetry()
+            requires_switch = self.core.takeoff_requires_air_switch(rospy.get_time())
+        if requires_switch:
+            self._switch_to_air()
         with self._state_lock:
             self.core.begin_takeoff(rospy.get_time())
         success = self.backend.takeoff(self.core.takeoff_height, self.takeoff_timeout)
@@ -160,12 +196,56 @@ class ModeManagerNode:
             self.target_altitude = None
         self._switch_to_ground()
 
+    def _prepare_ground_sequence(self):
+        if not bool(rospy.get_param("/ground_air/localized", False)):
+            raise TransitionError("ground navigation requires valid localization")
+        with self._state_lock:
+            snapshot = self._refresh_telemetry()
+            self.core.begin_ground_navigation(rospy.get_time())
+            if not snapshot["armed"]:
+                raise TransitionError(
+                    "ground navigation requires manual RC arming"
+                )
+            if str(snapshot["flight_mode"]).upper() != "OFFBOARD":
+                raise TransitionError(
+                    "ground navigation requires manual RC OFFBOARD selection"
+                )
+        success = self.backend.prepare_ground(self.ground_mode_timeout)
+        with self._state_lock:
+            snapshot = self._refresh_telemetry()
+            self.core.finish_ground_navigation(success, snapshot["flight_mode"])
+
     def _takeoff_service(self, _request):
         success, message = self._run_transition(self._takeoff_sequence)
         return TriggerResponse(success=success, message=message)
 
+    def _takeoff_to_altitude_service(self, request):
+        success, message = self._run_transition(
+            lambda: self._takeoff_sequence(request.altitude)
+        )
+        return SetFlightAltitudeResponse(
+            success=success, message=message, status=self._status_message()
+        )
+
+    def _set_flight_altitude_service(self, request):
+        def set_target():
+            with self._state_lock:
+                self._refresh_telemetry()
+                self.target_altitude = self.core.set_flight_target(
+                    rospy.get_time(), request.altitude
+                )
+
+        success, message = self._run_transition(set_target)
+        return SetFlightAltitudeResponse(
+            success=success, message=message, status=self._status_message()
+        )
+
     def _land_service(self, _request):
         success, message = self._run_transition(self._landing_sequence)
+        return TriggerResponse(success=success, message=message)
+
+    def _prepare_ground_service(self, _request):
+        success, message = self._run_transition(self._prepare_ground_sequence)
         return TriggerResponse(success=success, message=message)
 
     def _set_mode_service(self, request):
@@ -196,30 +276,15 @@ class ModeManagerNode:
                 self.core.set_emergency_stop(True, "operator emergency stop")
                 if self.core.physical_mode == "air" and self.core.armed:
                     self.backend.hover()
+                elif snapshot["physical_mode"] == "ground":
+                    self.core.detail = (
+                        "operator emergency stop latched; "
+                        "switch RC to POSCTL manually"
+                    )
                 status = self._status_message()
                 self.status_pub.publish(status)
-            mode_restored = True
-            if (
-                snapshot["physical_mode"] == "ground"
-                and snapshot["armed"]
-                and snapshot["flight_mode"] == "OFFBOARD"
-            ):
-                rospy.sleep(self.ground_stop_settle_time)
-                mode_restored = self.backend.switch_flight_mode(
-                    "POSCTL", self.ground_mode_timeout
-                )
-                with self._state_lock:
-                    self._refresh_telemetry()
-                    if mode_restored:
-                        self.core.detail = "operator emergency stop; POSCTL restored"
-                    else:
-                        self.core.detail = (
-                            "operator emergency stop latched; POSCTL restore failed"
-                        )
-                    status = self._status_message()
-                    self.status_pub.publish(status)
             return SetEmergencyStopResponse(
-                success=mode_restored, message=self.core.detail, status=status
+                success=True, message=self.core.detail, status=status
             )
         except (TransitionError, RuntimeError, rospy.ServiceException) as error:
             with self._state_lock:
@@ -241,21 +306,11 @@ class ModeManagerNode:
             with self._state_lock:
                 snapshot = self._refresh_telemetry()
                 self.core.set_emergency_stop(False, "operator reset")
-                if snapshot["physical_mode"] == "ground" and snapshot["armed"]:
-                    mode_ready = self.backend.switch_flight_mode(
-                        "OFFBOARD", self.ground_mode_timeout
+                if snapshot["physical_mode"] == "ground":
+                    self.core.detail = (
+                        "operator reset; manually arm and select OFFBOARD "
+                        "before ground preparation"
                     )
-                    if not mode_ready:
-                        self.core.set_emergency_stop(
-                            True, "ground OFFBOARD confirmation failed"
-                        )
-                        status = self._status_message()
-                        self.status_pub.publish(status)
-                        return SetEmergencyStopResponse(
-                            success=False, message=self.core.detail, status=status
-                        )
-                    self._refresh_telemetry()
-                    self.core.detail = "operator reset; ground OFFBOARD confirmed"
                 status = self._status_message()
                 self.status_pub.publish(status)
             return SetEmergencyStopResponse(

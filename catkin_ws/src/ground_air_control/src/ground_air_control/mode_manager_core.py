@@ -23,14 +23,27 @@ class Mode(Enum):
 
 
 class ModeManagerCore:
-    def __init__(self, takeoff_height=1.0, telemetry_timeout=0.5):
-        takeoff_height = float(takeoff_height)
+    def __init__(
+        self,
+        takeoff_height=1.0,
+        telemetry_timeout=0.5,
+        min_flight_altitude=0.5,
+        max_flight_altitude=3.0,
+    ):
         telemetry_timeout = float(telemetry_timeout)
-        if not math.isclose(takeoff_height, 1.0, abs_tol=1e-9):
-            raise ValueError("takeoff_height must be exactly 1.0 m")
+        self.min_flight_altitude = float(min_flight_altitude)
+        self.max_flight_altitude = float(max_flight_altitude)
+        if (
+            not math.isfinite(self.min_flight_altitude)
+            or not math.isfinite(self.max_flight_altitude)
+            or self.min_flight_altitude <= 0.0
+            or self.max_flight_altitude <= self.min_flight_altitude
+        ):
+            raise ValueError("flight altitude limits are invalid")
         if not math.isfinite(telemetry_timeout) or telemetry_timeout <= 0.0:
             raise ValueError("telemetry_timeout must be positive")
-        self.takeoff_height = takeoff_height
+        self.takeoff_height = 0.0
+        self.set_takeoff_height(takeoff_height)
         self.telemetry_timeout = telemetry_timeout
         self.state = Mode.UNKNOWN
         self.emergency_stop = False
@@ -41,6 +54,31 @@ class ModeManagerCore:
         self.altitude = 0.0
         self.telemetry_stamp = float("-inf")
         self.pose_stamp = float("-inf")
+
+    def validate_flight_altitude(self, altitude):
+        altitude = float(altitude)
+        if not math.isfinite(altitude):
+            raise ValueError("flight altitude must be finite")
+        if not self.min_flight_altitude <= altitude <= self.max_flight_altitude:
+            raise ValueError(
+                "flight altitude must be within [{:.2f}, {:.2f}] m".format(
+                    self.min_flight_altitude, self.max_flight_altitude
+                )
+            )
+        return altitude
+
+    def set_takeoff_height(self, altitude):
+        self.takeoff_height = self.validate_flight_altitude(altitude)
+        return self.takeoff_height
+
+    def set_flight_target(self, now, altitude):
+        self._require_not_estopped()
+        self._require_fresh(now)
+        if self.state is not Mode.AIRBORNE or self.physical_mode != "air":
+            raise TransitionError("altitude change requires airborne state")
+        altitude = self.validate_flight_altitude(altitude)
+        self.detail = "tracking flight altitude {:.2f} m".format(altitude)
+        return altitude
 
     def update_telemetry(
         self, now, connected, armed, physical_mode, altitude, pose_stamp
@@ -110,7 +148,51 @@ class ModeManagerCore:
         if self.armed:
             raise TransitionError("takeoff requires a disarmed vehicle")
         self.state = Mode.TAKEOFF
-        self.detail = "taking off to 1.0 m"
+        self.detail = "taking off to {:.2f} m".format(self.takeoff_height)
+
+    def takeoff_requires_air_switch(self, now):
+        """Return whether takeoff must first change the physical configuration."""
+        self._require_not_estopped()
+        self._require_fresh(now)
+        if self.armed:
+            raise TransitionError("takeoff requires a disarmed vehicle")
+        if self.state is Mode.GROUND and self.physical_mode == "ground":
+            return True
+        if self.state is Mode.AIR_READY and self.physical_mode == "air":
+            return False
+        raise TransitionError("takeoff requires ground or confirmed air-ready state")
+
+    def ground_disarm_required_for_takeoff(self, now):
+        """Validate the pre-transition state and report whether ground is armed."""
+        self._require_not_estopped()
+        self._require_fresh(now)
+        if self.state is Mode.GROUND and self.physical_mode == "ground":
+            return self.armed
+        if self.state is Mode.AIR_READY and self.physical_mode == "air":
+            return False
+        raise TransitionError(
+            "takeoff preparation requires ground or confirmed air-ready state"
+        )
+
+    def begin_ground_navigation(self, now):
+        self._require_not_estopped()
+        self._require_fresh(now)
+        if self.state is not Mode.GROUND or self.physical_mode != "ground":
+            raise TransitionError("ground navigation requires ground configuration")
+        self.detail = "preparing ground navigation"
+
+    def finish_ground_navigation(self, success, flight_mode):
+        if (
+            not success
+            or not self.armed
+            or self.physical_mode != "ground"
+            or str(flight_mode).upper() != "OFFBOARD"
+        ):
+            self.state = Mode.FAULT
+            self.detail = "ground navigation readiness was not confirmed"
+            raise TransitionError(self.detail)
+        self.state = Mode.GROUND
+        self.detail = "ground navigation ready"
 
     def finish_takeoff(self, success):
         if self.state is not Mode.TAKEOFF:
@@ -121,7 +203,7 @@ class ModeManagerCore:
             self.detail = "takeoff completion was not confirmed"
             raise TransitionError(self.detail)
         self.state = Mode.AIRBORNE
-        self.detail = "airborne at fixed height"
+        self.detail = "airborne at {:.2f} m".format(self.altitude)
 
     def begin_landing(self, now):
         self._require_not_estopped()
